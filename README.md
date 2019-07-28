@@ -1,6 +1,6 @@
 # LemmeSmash
 
-LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but it's been requested so [click here to invite it!](https://discord.invite)
+LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but it's been requested so [click here to invite it!](https://discordapp.com/oauth2/authorize?client_id=578591056866836490&scope=bot&permissions=536995904)
 
 The bot uses configurable keysmash tags and generates ISO Standard keysmashes using the characters `asdfghjkl` by default, or from a set of custom characters you choose.
 
@@ -17,7 +17,7 @@ Setup is simple:
 2. `[Optional]` Set a custom character set: `ks;charset asdfcvbn`
 3. Post a message with your keysmash tags: `Here is a keysmash: $`
 Using a set of keysmash tags that you set, it will replace all instances of the tags with a randomly generated keysmash.
-4. `[Bonus!]` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: `Here is a one-time custom keysmash: $asdfghjkl`
+4. `[Bonus!]` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: `Here is a one-time custom keysmash: $sdjcbn`
 
 ## Running the bot yourself
 The bot is written in JavaScript and uses a [mongoDB] database to store keysmash tags and custom character sets. It also takes a configuration file in JSON format that must be named `config.json`.
