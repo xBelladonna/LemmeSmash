@@ -1,0 +1,20 @@
+{
+  "name": "LemmeSmash",
+  "version": "1.0.0",
+  "description": "A Discord bot that generates keysmashes for you and your friends",
+  "main": "bot/main.js",
+  "scripts": {
+    "start": "node bot/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xBelladonna/LemmeSmash.git"
+  },
+  "author": "Bella | Nightshade",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/xBelladonna/LemmeSmash/issues"
+  },
+  "homepage": "https://github.com/xBelladonna/LemmeSmash#readme"
+}

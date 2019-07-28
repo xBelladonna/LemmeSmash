@@ -1,0 +1,6 @@
+{
+    "token": "your token here",
+    "db": "mongodb://db/LemmeSmash",
+    "defaultcharset": "asdfghjkl",
+    "logChannel": ""
+}
