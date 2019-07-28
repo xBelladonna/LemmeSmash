@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/xBelladonna/LemmeSmash/issues"
   },
-  "homepage": "https://github.com/xBelladonna/LemmeSmash#readme"
+  "homepage": "https://github.com/xBelladonna/LemmeSmash#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "mongoose": "^5.6.7"
+  }
 }
