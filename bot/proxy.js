@@ -50,7 +50,7 @@ module.exports.execute = async (client, msg) => {
 
         // Replace all instances of tags with a keysmash
         for (let i = 0; i < content.length; i++) {
-            content[i] = content[i].replace(pattern, keysmash.ISOStandard(charset[i] || config.defaultCharset));
+            content[i] = content[i].replace(pattern, keysmash.ISOStandard(charset[i] || doc.charset || config.defaultCharset));
         }
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)

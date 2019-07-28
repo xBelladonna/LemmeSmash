@@ -5,7 +5,7 @@ const user = mongoose.model("user", schemas.user);
 
 module.exports = {
     name: "tags",
-    aliases: ["proxy"],
+    aliases: ["t", "tag", "p", "proxy"],
     description: "Sets your keysmash tag(s)",
     usage: [
         "**\nClears your keysmash tags",
@@ -34,6 +34,7 @@ module.exports = {
 
 // Set or clear keysmash tags
 async function setTags(user, msg, args) {
+    let tags;
     let response;
 
     if (args.length > 0) {
