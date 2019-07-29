@@ -9,7 +9,7 @@ module.exports = {
     description: "Sets a custom character set to generate keysmashes from",
     usage: [
         "**\nClears your custom character set",
-        "<characters>**\nSets your custom character set to the characters you specify`"
+        "<characters>**\nSets your custom character set to the characters you specify"
     ],
     example: "asdfcvbn",
     execute: (client, msg, args) => {

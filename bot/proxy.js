@@ -27,21 +27,21 @@ module.exports.execute = async (client, msg) => {
         let match = [];
         let content = msg.content.split(" ");
         let charset = [];
-        if (prefix != null && suffix == null) {
-            pattern = new RegExp(`${utils.escapeCharacters(prefix)}([^\\s]*)`, "g");
-            for (let i = 0; i < content.length; i++) {
+        if (prefix != null && suffix == null) { // If there's a prefix but no suffix
+            pattern = new RegExp(`${utils.escapeCharacters(prefix)}([^\\s]*)`, "g"); // Match for tags and prefixed charsets
+            for (let i = 0; i < content.length; i++) { // Iterate over, creating an array of tags to replace
                 match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
                 charset.push(match[i].length > prefix.length ? match[i].slice(prefix.length, match[i].length) : "");
             }
         }
-        else if (prefix == null && suffix != null) {
+        else if (prefix == null && suffix != null) { // Match for suffixes only, the rest is the same as above
             pattern = new RegExp(`([^\\s]*)${utils.escapeCharacters(suffix)}`, "g");
             for (let i = 0; i < content.length; i++) {
                 match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
                 charset.push(match[i].length > suffix.length ? match[i].slice(0, match[i].length - suffix.length) : "");
             }
         }
-        else {
+        else { // When there's both a prefix and suffix
             pattern = new RegExp(`${utils.escapeCharacters(prefix)}([^\\s]*)${utils.escapeCharacters(suffix)}`, "g");
             for (let i = 0; i < content.length; i++) {
                 match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");

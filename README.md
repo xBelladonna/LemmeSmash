@@ -13,11 +13,11 @@ The bot has two commands:
 `ks;charset` is used to set your custom character set. The bot will remember this and use it each time you proxy a keysmash. Any letter, number or symbol is supported. Emoji are not supported as of yet.
 
 Setup is simple:
-1. Set a keysmash tag: `ks;tags $smash`
+1. Set a keysmash tag: `ks;tags #!smash`
 2. `[Optional]` Set a custom character set: `ks;charset asdfcvbn`
-3. Post a message with your keysmash tags: `Here is a keysmash: $`
+3. Post a message with your keysmash tags: `Here is a keysmash: #!`
 Using a set of keysmash tags that you set, it will replace all instances of the tags with a randomly generated keysmash.
-4. `[Bonus!]` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: `Here is a one-time custom keysmash: $sdjcbn`
+4. `[Bonus!]` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: `Here is a one-time custom keysmash: #!sdjcbn`
 
 ## Running the bot yourself
 The bot is written in JavaScript and uses a [mongoDB] database to store keysmash tags and custom character sets. It also takes a configuration file in JSON format that must be named `config.json`.

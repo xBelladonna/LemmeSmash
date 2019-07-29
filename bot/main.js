@@ -52,24 +52,16 @@ client.on("guildDelete", setPresence);
 // Respond to messages
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
-    if (!msg.content.startsWith(config.prefix)) return proxy.execute(client, msg); // Proxy messages first, if applicable
+    if (!msg.content.startsWith(config.prefix) && !msg.isMentioned(client.user))
+        return proxy.execute(client, msg); // Proxy messages first, if applicable
     // Then execute any commands the user issued
-    if (!(msg.content.startsWith(config.prefix) || msg.content.startsWith(`<@${client.user.id}>`) || msg.content.startsWith(`<@!${client.user.id}>`))) return; // Do nothing if the message doesn't start with the prefix or a ping
-
-    // Get command arguments from message contents
     let args;
+
     // Detect pings and set args accordingly
-    if (msg.content.startsWith(`<@${client.user.id}>`)) {
+    if (msg.isMentioned(client.user)) {
         args = msg.content.slice(`<@${client.user.id}> `.length).split(/ +/);
-        if (args[0] == null) args[0] = "help"; // We set the first arg to "help" if there are no args (i.e. a ping on its own)
-    }
-    // This section is because discord prefixes user IDs in pings with "!" if the user is nicknamed
-    else if (msg.content.startsWith(`<@!${client.user.id}>`)) {
-        args = msg.content.slice(`<@!${client.user.id}> `.length).split(/ +/);
-        if (args[0] == null) args[0] = "help";
-    }
-    // Set args according to prefix if msg doesn't start with a ping
-    else args = msg.content.slice(config.prefix.length).split(/ +/);
+        if (args[0] == "") args[0] = "help"; // We set the first arg to "help" if there are no args (i.e. a ping on its own)
+    } else args = msg.content.slice(config.prefix.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
 
     // Check permissions
     utils.checkPermissions(client, msg, config.permissions.commands);
@@ -82,7 +74,7 @@ client.on("message", async msg => {
 
     const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
     // Notify the user if the command was invalid
-    if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix} help\`, or just ping me!`))
+    if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`))
 
     // Execute command
     try {

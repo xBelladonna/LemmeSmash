@@ -11,7 +11,7 @@ module.exports = {
         "**\nClears your keysmash tags",
         "<prefix>smash<suffix>**\nSets your keysmash tag(s). Only either a prefix or suffix is required, not both. Example match must contain the string `smash`"
     ],
-    example: "$text",
+    example: "#!text",
     execute: (client, msg, args) => {
         user.findById(msg.author.id, async (err, doc) => {
             if (err) throw err;
