@@ -112,12 +112,7 @@ process.on("SIGTERM", gracefulExit)
 
 // Set bot user presence status
 async function setPresence() {
-    if (client.guilds.size < 2) {
-        client.user.setActivity(`Mention me for help!`, { type: "PLAYING" });
-    }
-    else {
-        client.user.setActivity(`Annoy Bella for help! | in ${client.guilds.size} servers`, { type: "PLAYING" });
-    }
+    client.user.setActivity(client.guilds.size < 2 ? `ks;help` : `ks;help | in ${client.guilds.size} servers`, { type: "PLAYING" });
 }
 
 // Log out of Discord and exit gracefully
