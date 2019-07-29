@@ -37,6 +37,25 @@ module.exports = {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
     },
 
+    // Check permissions and notify if we don't have the ones we need
+    checkPermissions: async (client, msg, flags) => {
+        let currentPerms = await msg.channel.permissionsFor(client.user);
+        let missing = [];
+        flags.forEach(flag => {
+            if (!currentPerms.has(flag)) missing.push(flag)
+        });
+        if (missing.length > 0) {
+            let owner = await client.fetchUser(msg.guild.owner);
+            // Notify the user if there's missing permissions
+            if (!missing.includes("SEND_MESSAGES")) return msg.channel.send(`I'm missing the following permissions: \n${missing.join("\n")}`)
+            // Failing that, DM the server owner
+            else return owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n${missing.join("\n")}`)
+                .catch(err => { // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
+                    return utils.stackTrace(client, msg, new Error("Unable to notify a server owner of missing permissions!\n") + new Error(`Missing permissions in ${msg.guild.name} (${msg.guild.id}):\n${missing.join("\n")}\n\nServer owner: ${owner.tag} (${owner.id})`))
+                });
+        }
+    },
+
     // Traceback logging
     stackTrace: async (client, msg, err) => {
         try {

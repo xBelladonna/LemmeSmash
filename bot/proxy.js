@@ -19,7 +19,8 @@ module.exports.execute = async (client, msg) => {
                 if (!msg.content.replace(prefix, null).includes(suffix)) return;
         }
 
-        // TODO: Check permissions
+        // Check permissions
+        utils.checkPermissions(client, msg, config.permissions.proxy);
 
         // Match for prefixes, suffixes, or both, and get the charset if specified with the tag(s)
         let pattern;

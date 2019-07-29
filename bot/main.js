@@ -5,20 +5,6 @@ const fs = require("fs");
 const proxy = require("./proxy.js")
 const mongoose = require("mongoose");
 
-// Load array of required bot permission flags into memory
-const permissions = {
-    "commands": [
-        "VIEW_CHANNEL",
-        "READ_MESSAGE_HISTORY",
-        "SEND_MESSAGES",
-        "ADD_REACTIONS"
-    ],
-    "proxy": [
-        "MANAGE_WEBHOOKS",
-        "MANAGE_MESSAGES"
-    ]
-};
-
 console.warn("Starting LemmeSmash...");
 console.warn("Connecting to database...");
 
@@ -85,22 +71,8 @@ client.on("message", async msg => {
     // Set args according to prefix if msg doesn't start with a ping
     else args = msg.content.slice(config.prefix.length).split(/ +/);
 
-    // Check permissions and notify if we don't have the ones we need
-    let currentPerms = await msg.channel.permissionsFor(client.user);
-    let missing = [];
-    permissions.commands.forEach(flag => {
-        if (!currentPerms.has(flag)) missing.push(flag)
-    });
-    if (missing.length > 0) {
-        let owner = await client.fetchUser(msg.guild.owner);
-        // Notify the user if there's missing permissions
-        if (!missing.includes("SEND_MESSAGES")) return msg.channel.send(`I'm missing the following permissions: \n${missing.join("\n")}`)
-        // Failing that, DM the server owner
-        else return owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n${missing.join("\n")}`)
-            .catch(err => { // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
-                return utils.stackTrace(client, msg, new Error("Unable to notify a server owner of missing permissions!\n") + new Error(`Missing permissions in ${msg.guild.name} (${msg.guild.id}):\n${missing.join("\n")}\n\nServer owner: ${owner.tag} (${owner.id})`))
-            });
-    }
+    // Check permissions
+    utils.checkPermissions(client, msg, config.permissions.commands);
 
     // Parse commands and arguments
     let commandName = args.shift();
