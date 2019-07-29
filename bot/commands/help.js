@@ -9,16 +9,17 @@ module.exports = {
     description: "Shows my help card to help you get started",
     execute: async (client, msg, args) => {
         if (!args.length) { // If the command is issued on its own
-            const oauthApp = await client.fetchApplication(); // Fetch the bot info to get the client id
             const flags = config.permissions.proxy.concat(config.permissions.commands); // Compile permission flags into a single array
-            const permissions = Permissions.resolve(flags); // then resolve them to an integer
-            // Construct the URL with proper client ID and permissions integer
+            const commands = msg.client.commands; // Load commands into memory
 
-            const inviteUrl = `https://discordapp.com/oauth2/authorize?client_id=${oauthApp.id}&scope=bot&permissions=${permissions}`; // Construct invite URL with proper parameters
+            const inviteUrl = await client.generateInvite(flags); // Generate invite URL with proper permissions
             const githubUrl = "https://github.com/xBelladonna/LemmeSmash"; // GitHub repo
 
             // Basic info about the bot
             const infoMsg = `LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but you'll be surprised how fun it can be.\nThe bot uses configurable keysmash tags and generates ISO Standard keysmashes using the characters \`${config.defaultCharset}\` by default, or from a set of custom characters you choose.`;
+
+            const commandList = `The bot has the following commands available. Type \`${config.prefix}help [command name]\` to get info on a specific command.
+            ${client.commands.map(command => `\`${config.prefix}${command.name}\` - ${command.description}`).join("\n")}`;
 
             // Quick how-to guide
             gettingStarted = `
@@ -26,7 +27,7 @@ module.exports = {
             **2.** \`[Optional]\` Set a custom character set: \`ks; charset asdfcvbn\`
             **3.** Post a message with your keysmash tags: \`Here is a keysmash: $\`
             Using a set of keysmash tags that you set, it will replace all instances of the tags with a randomly generated keysmash.
-            **4.** \`[Bonus!]\` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: \`Here is a one - time custom keysmash: $sdjcbn\``;
+            **4.** \`[Bonus!]\` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: \`Here is a one-time custom keysmash: $sdjcbn\``;
 
             // Extra tips and tricks
             footnotes = "• **[Coming soon!]** You can also find out who sent a proxied message by reacting to it with ❓\n• **[Coming soon!]** You can delete proxied messages you sent by reacting to them with ❌";
@@ -36,6 +37,7 @@ module.exports = {
                 .setColor("#ffaa00")
                 .addField("About Me!", infoMsg)
                 .addField("Getting Started:", gettingStarted)
+                .addField("Commands", commandList)
                 .addField("Other things", footnotes)
                 .addField("Add me!", `[Click here to invite the the bot to your server!](${inviteUrl})`)
                 .addField("See my code!", `[Click here to visit the GitHub repository!](${githubUrl})`)
@@ -47,7 +49,6 @@ module.exports = {
 
         // Do the rest of the stuff if there are any arguments
         const data = [];
-        const commands = msg.client.commands;
         const name = args[0].toLowerCase();
         const command = commands.get(name) || commands.find(command => command.aliases && command.aliases.includes(name));
 
