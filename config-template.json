@@ -1,6 +1,20 @@
 {
-    "token": "your token here",
+    "token": "sedfghjkooIUTYF/CVBHUTYTikokjhg=-GGyitdhcgvuGfdrrDRYTFGF",
     "db": "mongodb://db/LemmeSmash",
-    "defaultcharset": "asdfghjkl",
-    "logChannel": ""
+    "prefix": "ks;",
+    "defaultCharset": "asdfghjkl",
+    "logChannel": "536407846254975190",
+    "owner": "932597343265834670",
+    "permissions": {
+        "commands": [
+            "VIEW_CHANNEL",
+            "READ_MESSAGE_HISTORY",
+            "SEND_MESSAGES",
+            "ADD_REACTIONS"
+        ],
+        "proxy": [
+            "MANAGE_WEBHOOKS",
+            "MANAGE_MESSAGES"
+        ]
+    }
 }

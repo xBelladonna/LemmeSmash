@@ -1,4 +1,4 @@
-const { Permissions } = require("discord.js");
+const Discord = require("discord.js");
 const utils = require("../utils.js");
 const config = require("../../config.json");
 
@@ -8,9 +8,9 @@ module.exports = {
     aliases: ["h", "info", "invite"],
     description: "Shows my help card to help you get started",
     execute: async (client, msg, args) => {
+        const commands = msg.client.commands; // Load commands into memory
         if (!args.length) { // If the command is issued on its own
             const flags = config.permissions.proxy.concat(config.permissions.commands); // Compile permission flags into a single array
-            const commands = msg.client.commands; // Load commands into memory
 
             const inviteUrl = await client.generateInvite(flags); // Generate invite URL with proper permissions
             const githubUrl = "https://github.com/xBelladonna/LemmeSmash"; // GitHub repo
@@ -33,8 +33,11 @@ module.exports = {
             footnotes = "• **[Coming soon!]** You can also find out who sent a proxied message by reacting to it with ❓\n• **[Coming soon!]** You can delete proxied messages you sent by reacting to them with ❌";
 
             // Construct the embed to send
+            let author = await client.user;
+            let guildMember = await msg.guild.fetchMember(author);
             embed = utils.successEmbed()
                 .setColor("#ffaa00")
+                .setAuthor(guildMember != undefined ? `${guildMember.displayName} (${author.tag})` : author.tag, author.avatarURL, "https://nightshade.fun/keysmash/")
                 .addField("About Me!", infoMsg)
                 .addField("Getting Started:", gettingStarted)
                 .addField("Commands", commandList)
