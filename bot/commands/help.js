@@ -34,7 +34,7 @@ module.exports = {
 
             // Construct the embed to send
             let author = await client.user;
-            let guildMember = await msg.guild.fetchMember(author);
+            let guildMember = msg.channel.type === "text" ? await msg.guild.fetchMember(author) : undefined;
             embed = utils.successEmbed()
                 .setColor("#ffaa00")
                 .setAuthor(guildMember != undefined ? `${guildMember.displayName} (${author.tag})` : author.tag, author.avatarURL, "https://nightshade.fun/keysmash/")

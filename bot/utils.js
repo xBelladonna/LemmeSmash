@@ -37,6 +37,13 @@ module.exports = {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
     },
 
+    // Async function that waits for the given number of ms
+    sleep: time => {
+        return new Promise(resolve => {
+            setTimeout(() => resolve(), time);
+        });
+    },
+
     // Check permissions and notify if we don't have the ones we need
     checkPermissions: async (client, msg, flags) => {
         let currentPerms = await msg.channel.permissionsFor(client.user);
