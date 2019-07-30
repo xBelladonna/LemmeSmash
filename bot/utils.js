@@ -28,7 +28,7 @@ module.exports = {
                 hook = await channel.createWebhook("LemmeSmash");
             else hook = await webhooks.find(hook => hook.owner.id === client.user.id);
             return resolve(hook);
-        });
+        }).catch(err => { throw err });
     },
 
     // Add escape character ("\") before any special characters that need escaping (in regex)
