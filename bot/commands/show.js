@@ -25,6 +25,7 @@ module.exports = {
                 .setTitle(msg.member.displayName ? `${msg.member.displayName} (${msg.author.tag})` : msg.author.tag)
                 .addField((doc.tags.prefix =! "" && doc.tags.suffix != "") ? "Keysmash tags" : "Keysmash tag", tags);
             if (doc.charset != "") embed.addField("Custom character set", `\`${doc.charset}\``);
+            if (msg.author.avatarURL) embed.setThumbnail(msg.author.avatarURL);
             return msg.channel.send(embed);
         });
     }
