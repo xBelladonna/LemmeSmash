@@ -49,6 +49,10 @@ client.on("reconnecting", () => console.warn("Lost connection to the Discord gat
 client.on("guildCreate", setPresence);
 client.on("guildDelete", setPresence);
 
+// Handle reaction events
+const reactions = require('./reactions.js');
+reactions.execute(client);
+
 // Respond to messages
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
@@ -63,8 +67,8 @@ client.on("message", async msg => {
         if (args[0] == "") args[0] = "help"; // We set the first arg to "help" if there are no args (i.e. a ping on its own)
     } else args = msg.content.slice(config.prefix.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
 
-    // Check permissions
-    utils.checkPermissions(client, msg, config.permissions.commands);
+    // Check permissions (if not in DMs)
+    if (msg.channel.type === "text") utils.checkPermissions(client, msg, config.permissions.commands);
 
     // Parse commands and arguments
     let commandName = args.shift();

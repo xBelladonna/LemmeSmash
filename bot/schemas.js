@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
 module.exports = {
+    // Store user information in the db
     user: new mongoose.Schema({
         _id: String,
-        tags: {
+        keysmash: {
             prefix: { type: String, default: "" },
             suffix: { type: String, default: "" }
         },
