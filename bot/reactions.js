@@ -66,7 +66,7 @@ async function queryMessage(react, user, client) {
 }
 
 function deleteMessage(react, user, client) {
-    messages.findOne({ _id: react.message.id }, async (err, doc) => {
+    message.findOne({ _id: react.message.id }, async (err, doc) => {
         if (err) {
             console.warn(err)
             utils.logTraceback(err, client)

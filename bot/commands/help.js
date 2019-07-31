@@ -30,7 +30,7 @@ module.exports = {
             **4.** \`[Bonus!]\` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: \`Here is a one-time custom keysmash: $sdjcbn\``;
 
             // Extra tips and tricks
-            footnotes = "• **[Coming soon!]** You can also find out who sent a proxied message by reacting to it with ❓\n• **[Coming soon!]** You can delete proxied messages you sent by reacting to them with ❌";
+            footnotes = "• You can also find out who sent a proxied message by reacting to it with ❓\n• You can delete proxied messages you sent by reacting to them with ❌";
 
             // Construct the embed to send
             let author = await client.user;
