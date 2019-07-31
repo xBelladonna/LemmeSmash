@@ -106,5 +106,10 @@ async function owoify(doc, msg) {
     //else pattern = new RegExp(`${doc.owo.prefix}|${doc.owo.suffix}`, "g");
     msg.content = await msg.content.replace(pattern, "");
     if (!msg.content) return;
-    return msg.content.replace(new RegExp("l|r", "g"), "w").replace(new RegExp("L|R", "g"), "W");
+    return msg.content.split(" ")
+        .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
+        .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
+        .map(x => x.replace(new RegExp("[ts]ion$", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
+        .map(x => x.replace(new RegExp("[ts]ions$", "ig"), x => x === x.toUpperCase() ? "SHUNS" : "shuns"))
+        .join(" ");
 }
