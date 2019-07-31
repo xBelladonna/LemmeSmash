@@ -28,8 +28,18 @@ module.exports.execute = async (client, msg) => {
         // Check permissions
         utils.checkPermissions(client, msg, config.permissions.proxy);
         let content;
-        if (msg.content.includes(doc.keysmash.prefix || doc.keysmash.suffix)) content = await replaceByKeysmash(doc, msg);
-        if (msg.content.includes(doc.owo.prefix || doc.owo.suffix)) content = await owoify(doc, msg);
+        if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
+            content = await replaceByKeysmash(doc, msg);
+        else if ((doc.keysmash.prefix == "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.suffix))
+            content = await replaceByKeysmash(doc, msg);
+        else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
+            content = await replaceByKeysmash(doc, msg);
+        else if ((doc.owo.prefix != "" && doc.owo.suffix == "") && msg.content.includes(doc.owo.prefix))
+            content = await owoify(doc, msg);
+        else if ((doc.owo.prefix == "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.suffix))
+            content = await owoify(doc, msg);
+        else if ((doc.owo.prefix != "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.prefix && doc.owo.suffix))
+            content = await owoify(doc, msg);
         if (!content) return;
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)

@@ -9,18 +9,18 @@ module.exports = {
     description: "Shows your user card with your owo tags and custom character set",
     usage: "",
     example: "",
-    execute: async (client, msg) => {
+    execute: (client, msg) => {
         user.findById(msg.author.id, async (err, doc) => {
             if (err) throw err;
-            if (doc == null) return msg.channel.send(utils.errorEmbed("You have not set any tags or a character set. Type \`ks;help\` to get started!"));
+            if (doc == null) return msg.channel.send(utils.errorEmbed("You have not set any tags or a custom character set. Type \`ks;help\` to get started!"));
 
             let tagsKeysmash = "";
-            if (doc.owo.prefix != "" && doc.owo.suffix == "")
-                tagsKeysmash = `Prefix: \`${doc.owo.prefix}\`\nExample: Check this out ${doc.owo.prefix}sdfgh`;
-            else if (doc.owo.prefix == "" && doc.owo.suffix != "")
-                tagsKeysmash = `Suffix: \`${doc.owo.suffix}\`\nExample: Check this out sdfgh${doc.owo.suffix}`;
-            else if (doc.owo.prefix != "" && doc.owo.suffix != "")
-                tagsKeysmash = `Prefix: \`${doc.owo.prefix}\`\nSuffix: \`${doc.owo.suffix}\`\nExample: Check this out ${doc.owo.prefix}sdfgh${doc.owo.suffix}`;
+            if (doc.keysmash.prefix != "" && doc.keysmash.suffix == "")
+                tagsKeysmash = `Prefix: \`${doc.keysmash.prefix}\`\nExample: Check this out ${doc.keysmash.prefix}sdfgh`;
+            else if (doc.keysmash.prefix == "" && doc.keysmash.suffix != "")
+                tagsKeysmash = `Suffix: \`${doc.keysmash.suffix}\`\nExample: Check this out sdfgh${doc.keysmash.suffix}`;
+            else if (doc.keysmash.prefix != "" && doc.keysmash.suffix != "")
+                tagsKeysmash = `Prefix: \`${doc.keysmash.prefix}\`\nSuffix: \`${doc.keysmash.suffix}\`\nExample: Check this out ${doc.keysmash.prefix}sdfgh${doc.keysmash.suffix}`;
 
             let tagsOwo  = "";
             if (doc.owo.prefix != "" && doc.owo.suffix == "")
