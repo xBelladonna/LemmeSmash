@@ -90,21 +90,6 @@ client.on("message", async msg => {
     }
 });
 
-// Handle reactions
-// TODO: Create db schema to store message IDs so we can delete and query messages
-/*
-client.on("messageReactionAdd", async (react, user) => {
-    switch (react.emoji.name) {
-        case "❌":
-            return deleteMessage(react, user, client);
-
-        default:
-            break;
-    }
-});
-*/
-
-
 // Finally, login with the configured token
 client.login(config.token);
 
