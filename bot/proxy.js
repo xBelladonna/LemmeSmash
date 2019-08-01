@@ -101,15 +101,22 @@ async function replaceByKeysmash(doc, msg) {
 }
 
 async function owoify(doc, msg) {
-    const pattern = new RegExp(`${utils.escapeCharacters(doc.owo.prefix)}|${utils.escapeCharacters(doc.owo.suffix)}`, "g");
-    //if (!doc.owo.prefix && doc.owo.suffix) pattern = new RegExp(`${doc.owo.suffix}`, "g");
-    //else pattern = new RegExp(`${doc.owo.prefix}|${doc.owo.suffix}`, "g");
-    msg.content = await msg.content.replace(pattern, "");
-    if (!msg.content) return;
-    return msg.content.split(" ")
-        .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
-        .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
-        .map(x => x.replace(new RegExp("[ts]ion$", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
-        .map(x => x.replace(new RegExp("[ts]ions$", "ig"), x => x === x.toUpperCase() ? "SHUNS" : "shuns"))
-        .join(" ");
+    if (doc.owo.prefix && msg.content.startsWith(doc.owo.prefix)) {
+        msg.content = await msg.content.slice(1);
+        return replaceWithOwO(msg);
+    }
+    else if (doc.owo.suffix && msg.content.endsWith(doc.owo.suffix)) {
+        msg.content = await msg.content.slice(0, -1);
+        return replaceWithOwO(msg);
+    } else return;
+
+    function replaceWithOwO(msg) {
+        if (!msg.content) return;
+        return msg.content.split(" ")
+            .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
+            .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
+            .map(x => x.replace(new RegExp("[ts]ion$", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
+            .map(x => x.replace(new RegExp("[ts]ions$", "ig"), x => x === x.toUpperCase() ? "SHUNS" : "shuns"))
+            .join(" ");
+    }
 }
