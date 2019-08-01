@@ -74,7 +74,7 @@ function deleteMessage(react, user, client) {
         }
         if (doc == null) return
         if (user.id != doc.owner) return
-        messages.deleteOne({ _id: doc._id }, err => {
+        message.deleteOne({ _id: doc._id }, err => {
             if (err) {
                 console.warn(err)
                 utils.logTraceback(err, client)
