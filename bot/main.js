@@ -56,7 +56,7 @@ reactions.execute(client);
 // Respond to messages
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
-    if (!msg.content.startsWith(config.prefix) && !msg.isMentioned(client.user))
+    if (!msg.content.startsWith(config.prefix) && !msg.content.startsWith(client.user))
         return proxy.execute(client, msg); // Proxy messages first, if applicable
     // Then execute any commands the user issued
     let args;
