@@ -56,6 +56,7 @@ module.exports.execute = async (client, msg) => {
             owner: msg.member.id,
         }).save();
 
+        await utils.sleep(250); // Wait 0.25 seconds to prevent stuck messages
         return msg.delete(); // Finally, delete the original message
     });
 }
