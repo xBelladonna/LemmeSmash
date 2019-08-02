@@ -52,7 +52,7 @@ async function queryMessage(react, user, client) {
         let response = utils.successEmbed()
             .setAuthor(owner.tag, owner.avatarURL)
             .setDescription(react.message.content)
-            .addField("Sent by", `${owner} (${owner.id})`)
+            .addField("Sent by", `${owner} (ID: ${owner.id})`)
             .setTimestamp(doc.timestamp);
 
         try {
