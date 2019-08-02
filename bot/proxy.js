@@ -13,17 +13,6 @@ module.exports.execute = async (client, msg) => {
     user.findById(msg.author.id, async (err, doc) => { // Get the user document from the db
         if (err) throw err;
         if (doc == null) return; // If not found, do nothing
-        if (!new RegExp(`${doc.keysmash.prefix}|${doc.keysmash.suffix}|${doc.owo.prefix}|${doc.owo.suffix}`, "g").test(msg.contents))
-            return; // If message doesn't contain tags, do nothing
-
-        /* deprecated code (removing this didn't hurt but if you figure out what this did please tell me)
-
-        if (prefix == suffix) {
-        await msg.content.replace(prefix, null);
-        if (msg.content != null)
-            if (!msg.content.replace(prefix, null).includes(suffix)) return;
-        }
-        */
 
         // Check permissions
         utils.checkPermissions(client, msg, config.permissions.proxy);
@@ -34,12 +23,20 @@ module.exports.execute = async (client, msg) => {
             content = await replaceByKeysmash(doc, msg);
         else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
             content = await replaceByKeysmash(doc, msg);
-        else if ((doc.owo.prefix != "" && doc.owo.suffix == "") && msg.content.includes(doc.owo.prefix))
-            content = await owoify(doc, msg);
-        else if ((doc.owo.prefix == "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.suffix))
-            content = await owoify(doc, msg);
-        else if ((doc.owo.prefix != "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.prefix && doc.owo.suffix))
-            content = await owoify(doc, msg);
+
+        else if ((doc.owo.prefix != "" && doc.owo.suffix == "") && msg.content.includes(doc.owo.prefix)) {
+            msg.content = await msg.content.slice(1);
+            content = await owoify(msg);
+        }
+        else if ((doc.owo.prefix == "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.suffix)) {
+            msg.content = await msg.content.slice(0, -1);
+            content = await owoify(msg);
+        }
+        else if ((doc.owo.prefix != "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.prefix && doc.owo.suffix)) {
+            msg.content = await msg.content.slice(1, -1);
+            content = await owoify(msg);
+        }
+        else if (doc.autoproxy === true) content = await owoify(msg);
         if (!content) return;
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)
@@ -100,23 +97,12 @@ async function replaceByKeysmash(doc, msg) {
     return content.join(" ");
 }
 
-async function owoify(doc, msg) {
-    if (doc.owo.prefix && msg.content.startsWith(doc.owo.prefix)) {
-        msg.content = await msg.content.slice(1);
-        return replaceWithOwO(msg);
-    }
-    else if (doc.owo.suffix && msg.content.endsWith(doc.owo.suffix)) {
-        msg.content = await msg.content.slice(0, -1);
-        return replaceWithOwO(msg);
-    } else return;
-
-    function replaceWithOwO(msg) {
-        if (!msg.content) return;
-        return msg.content.split(" ")
-            .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
-            .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
-            .map(x => x.replace(new RegExp("[ts]ion$", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
-            .map(x => x.replace(new RegExp("[ts]ions$", "ig"), x => x === x.toUpperCase() ? "SHUNS" : "shuns"))
-            .join(" ");
-    }
+async function owoify(msg) {
+    if (!msg.content) return;
+    return msg.content.split(" ")
+        .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
+        .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
+        .map(x => x.replace(new RegExp("[ts]ion$", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
+        .map(x => x.replace(new RegExp("[ts]ions$", "ig"), x => x === x.toUpperCase() ? "SHUNS" : "shuns"))
+        .join(" ");
 }
