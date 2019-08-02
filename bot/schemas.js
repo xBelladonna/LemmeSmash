@@ -12,7 +12,8 @@ module.exports = {
             prefix: { type: String, default: "" },
             suffix: { type: String, default: "" }
         },
-        charset: { type: String, default: "" }
+        charset: { type: String, default: "" },
+        autoproxy: { type: Boolean, default: false }
     }),
 
     // Store message ids in the db so we can tell who sent them
@@ -21,12 +22,5 @@ module.exports = {
         _id: String,
         owner: String,
         timestamp: { type: Date, default: Date.now }
-    }),
-
-    // Store reactions in db so we don't have to await a promise or something, leaving hanging threads
-    reaction: new mongoose.Schema({
-        _id: String,
-        user: String,
-        settings: Object   // Settings object must have `type` tag
     })
 }
