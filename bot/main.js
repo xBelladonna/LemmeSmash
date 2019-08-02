@@ -5,7 +5,7 @@ const fs = require("fs");
 const proxy = require("./proxy.js")
 const mongoose = require("mongoose");
 
-console.warn("Starting LemmeSmash...");
+console.warn("Starting LemmeSmash...\n");
 console.warn("Connecting to database...");
 
 // Connect to the db
@@ -17,7 +17,7 @@ mongoose.connect(config.db, {
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "Database connection error:"));
 db.once("open", () => {
-    console.log(`Connected to database on ${config.db}`);
+    console.log(`Connected to database on ${config.db}\n`);
 });
 
 const schemas = require("./schemas.js"); // Load db schemas into memory
@@ -40,16 +40,23 @@ new Promise(resolve => {
 // Respond to various Discord events
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag} (ID: ${client.user.id})`);
-    console.log(`Connected to ${client.channels.size} channels in ${client.guilds.size} servers`);
+    console.log(`Connected to ${client.channels.size} ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
     setPresence();
 });
 
-client.on("reconnecting", () => console.warn("Lost connection to the Discord gateway!\nAttempting to resume the websocket connection..."));
+client.on("warn", info => console.warn(info));
+client.on("reconnecting", () =>
+    console.warn("\nLost connection to the Discord gateway!\nAttempting to resume the websocket connection..."));
+client.on("resume", () => console.log("Successfully resumed websocket connection!"));
 
-client.on("resume", () => console.log("Successfully reconnected to the Discord gateway!"));
-
-client.on("guildCreate", setPresence);
-client.on("guildDelete", setPresence);
+client.on("guildCreate", () => {
+    setPresence();
+    console.log(`\n${client.user.tag} has been added to a guild!\nNow connected to ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
+});
+client.on("guildDelete", () => {
+    setPresence();
+    console.log(`\n${client.user.tag} has been removed from a guild :(\nNow connected to ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
+});
 
 // Handle reaction events
 const reactions = require('./reactions.js');
@@ -103,7 +110,7 @@ process.on("SIGTERM", gracefulExit)
 
 // Set bot user presence status
 async function setPresence() {
-    client.user.setActivity(client.guilds.size < 2 ? `ks;help` : `ks;help | in ${client.guilds.size} servers`, { type: "PLAYING" });
+    client.user.setActivity(client.guilds.size <= 1 ? `ks;help` : `ks;help | in ${client.guilds.size} servers`, { type: "PLAYING" });
 }
 
 // Log out of Discord and exit gracefully
