@@ -12,7 +12,8 @@ module.exports.execute = async client => {
     client.on("messageReactionAdd", async (react, user) => {
         if (react.emoji) {
             switch (react.emoji.name) {
-                case "❓" || "❔":
+                case "❓":
+                case "❔":
                     return queryMessage(react, user, client);
 
                 case "❌":
