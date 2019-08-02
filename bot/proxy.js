@@ -8,7 +8,7 @@ const keysmash = require("./keysmash.js");
 
 module.exports.execute = async (client, msg) => {
     if (msg.channel.type !== "text")
-        return msg.channel.send(`I can't proxy in DMs because webhooks don't exist in them ${keysmash.ISOStandard(sdfghjvb)}`);
+        return msg.channel.send(`I can't proxy in DMs because webhooks don't exist in them ${keysmash.ISOStandard("sdfghjvb")}`);
 
     user.findById(msg.author.id, async (err, doc) => { // Get the user document from the db
         if (err) throw err;
