@@ -41,19 +41,20 @@ module.exports.execute = async client => {
 }
 
 async function queryMessage(react, user, client) {
-    message.findOne({ _id: react.message.id }, async (err, doc) => {
+    message.findById(react.message.id, async (err, doc) => {
         if (err) { // Handle errors
             console.warn(err);
-            utils.logTraceback(err, client);
+            utils.stackTrace(client, null, err);
             return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"));
         }
         if (doc == null) return; // If the message wasn't a proxied message, do nothing
-        react.remove(user.id); // Removee the reaction ASAP
+        react.remove(user.id); // Remove the reaction ASAP
         const owner = await client.fetchUser(doc.owner);
         let response = utils.successEmbed()
             .setAuthor(owner.tag, owner.avatarURL)
             .setDescription(react.message.content)
             .addField("Sent by", `${owner} (ID: ${owner.id})`)
+            .setFooter("Sent:")
             .setTimestamp(doc.timestamp);
 
         try {
