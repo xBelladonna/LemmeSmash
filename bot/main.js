@@ -46,6 +46,8 @@ client.on("ready", () => {
 
 client.on("reconnecting", () => console.warn("Lost connection to the Discord gateway!\nAttempting to resume the websocket connection..."));
 
+client.on("resume", () => console.log("Successfully reconnected to the Discord gateway!"));
+
 client.on("guildCreate", setPresence);
 client.on("guildDelete", setPresence);
 
