@@ -44,18 +44,18 @@ client.on("ready", () => {
     setPresence();
 });
 
-client.on("warn", info => console.warn(info));
+client.on("warn", info => console.warn(`${new Date().toString()}\n${info}`));
 client.on("reconnecting", () =>
-    console.warn("\nLost connection to the Discord gateway!\nAttempting to resume the websocket connection..."));
-client.on("resume", () => console.log("Successfully resumed websocket connection!"));
+    console.warn(`${new Date().toString()}\nLost connection to the Discord gateway!\nAttempting to resume the websocket connection...`));
+client.on("resume", () => console.log(`${new Date().toString()}\nSuccessfully resumed websocket connection!`));
 
 client.on("guildCreate", () => {
     setPresence();
-    console.log(`\n${client.user.tag} has been added to a guild!\nNow connected to ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
+    console.log(`${new Date().toString()}\n${client.user.tag} has been added to a guild!\nNow connected to ${client.channels.size} ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
 });
 client.on("guildDelete", () => {
     setPresence();
-    console.log(`\n${client.user.tag} has been removed from a guild :(\nNow connected to ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
+    console.log(`${new Date().toString()}\n${client.user.tag} has been removed from a guild :(\nNow connected to ${client.channels.size} ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
 });
 
 // Handle reaction events
