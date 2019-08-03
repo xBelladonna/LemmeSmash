@@ -31,7 +31,7 @@ Using a set of keysmash tags that you set, it will replace all instances of the 
 
 ## Running the bot yourself
 
-The bot is written in JavaScript and uses a [mongoDB] database to store keysmash tags and custom character sets. It also takes a configuration file in JSON format that must be named `config.json`.
+The bot is written in JavaScript and uses a [MongoDB](https://www.mongodb.com/) database to store keysmash tags and custom character sets. It also takes a configuration file in JSON format that must be named `config.json`.
 
 ### With Docker
 
