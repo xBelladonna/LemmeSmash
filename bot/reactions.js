@@ -10,20 +10,18 @@ const events = {
 
 module.exports.execute = async client => {
     client.on("messageReactionAdd", async (react, user) => {
-        if (react.emoji) {
-            switch (react.emoji.name) {
-                case "❓":
-                case "❔":
-                    return queryMessage(react, user, client);
+        switch (react.emoji.name) {
+            case "❓":
+            case "❔":
+                return queryMessage(react, user, client);
 
-                case "❌":
-                    return deleteMessage(react, user, client);
+            case "❌":
+                return deleteMessage(react, user, client);
 
-                default:
-                    break;
+            default:
+                break;
             }
-        }
-    })
+    });
 
     // React to uncached messages using the raw gateway event payload
     client.on('raw', async event => {
@@ -34,7 +32,7 @@ module.exports.execute = async client => {
 
         const user = client.users.get(data.user_id);
         const message = await channel.fetchMessage(data.message_id);
-        const emojiKey = data.emoji.id ? `${data.emoji.name}: ${data.emoji.id}` : data.emoji.name; // Extract emoji data as `key: value`
+        const emojiKey = data.emoji.id ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name; // Extract emoji data as `key:value` (Discord accepts input in this format only)
         const reaction = message.reactions.get(emojiKey); // Get the reaction
         client.emit(events[event.t], reaction, user); // Emit a messageReactionAdd event with the reaction
     });
