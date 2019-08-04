@@ -1,19 +1,23 @@
 # LemmeSmash
 
-LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but it's been requested so [click here to invite it!](https://discordapp.com/oauth2/authorize?client_id=578591056866836490&scope=bot&permissions=536995904)
+LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but it's been requested so [click here to invite it!](https://discordapp.com/oauth2/authorize?client_id=578591056866836490&scope=bot&permissions=536995904) There's also a [support server](https://discord.gg/N5cBcp3) should you have any other questions, have a suggestion, or have a bug to report.
 
 The bot uses configurable keysmash tags and generates ISO Standard keysmashes using the characters `asdfghjkl` by default, or from a set of custom characters you choose.
 
-The bot has four commands:
+The bot also helps you on your adventures by letting you make a different set of tags that transforms your message into OwOspeak (or just automatically, per-server, if you want that).
+
+The bot has five commands:
 
 - `ks;tags`
+- `ks;autoproxy`
 - `ks;charset`
 - `ks;show`
 - `ks;help`
 
 The bot explains all of these commands once you invite it.
-`ks;help` is the first command you're likely to use, and it's *vrey* helpful
-`ks;tags` is used to set your keysmash tags, both prefixes and suffixes are supported. The tags must be around the word `smash`, i.e. `ks;tags $smash` or `ks;tags [smash]`.
+`ks;help` is the first command you're likely to use, and it's *very* helpful
+`ks;tags` is used to set your keysmash tags, both prefixes and suffixes are supported. The tags must be around the word `text`, i.e. `ks;tags $text` or `ks;tags [text]`.
+`ks;autoproxy` just enables proxying of owospeak by default instead of having to set and use tags for it. Works per-server.
 
 `ks;charset` is used to set your custom character set. The bot will remember this and use it each time you proxy a keysmash. Any letter, number or symbol is supported. Emoji are not supported as of yet.
 
@@ -21,7 +25,7 @@ The bot explains all of these commands once you invite it.
 
 ## Getting started!
 
-1. Set a keysmash tag: `ks;tags #!smash`
+1. Set a keysmash tag: `ks;tags #!text`
 2. `[Optional]` Set a custom character set: `ks;charset asdfcvbn`
 3. Post a message with your keysmash tags: `Here is a keysmash: #!`
 Using a set of keysmash tags that you set, it will replace all instances of the tags with a randomly generated keysmash.

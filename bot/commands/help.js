@@ -13,6 +13,7 @@ module.exports = {
             const flags = config.permissions.proxy.concat(config.permissions.commands); // Compile permission flags into a single array
 
             const inviteUrl = await client.generateInvite(flags); // Generate invite URL with proper permissions
+            const serverUrl = "https://discord.gg/N5cBcp3";
             const githubUrl = "https://github.com/xBelladonna/LemmeSmash"; // GitHub repo
 
             // Basic info about the bot
@@ -43,6 +44,7 @@ module.exports = {
                 .addField("Commands", commandList)
                 .addField("Other things", footnotes)
                 .addField("Add me!", `[Click here to invite the the bot to your server!](${inviteUrl})`)
+                .addField("Get help and support!", `[Click here to join the support server!](${serverUrl})`)
                 .addField("See my code!", `[Click here to visit the GitHub repository!](${githubUrl})`)
                 .setFooter(`Type \`${config.prefix}help [command name]\` to get info on a specific command!`);
 
