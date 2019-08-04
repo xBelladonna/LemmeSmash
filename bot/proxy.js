@@ -24,11 +24,12 @@ module.exports.execute = async (client, msg) => {
         else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
             content = await replaceByKeysmash(doc, msg);
 
-        else if ((msg.content.startsWith(doc.owo.prefix) && doc.owo.prefix !== "") && (msg.content.endsWith(doc.owo.suffix)) && doc.owo.suffix !== "") {
+        else if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(msg);
+        else if (msg.content.startsWith(doc.owo.prefix) && msg.content.endsWith(doc.owo.suffix)) {
+            if (doc.owo.prefix === "" && doc.owo.suffix === "") return;
             msg.content = await msg.content.slice(doc.owo.prefix.length, -doc.owo.suffix.length == 0 ? msg.content.length : -doc.owo.suffix.length).trim();
             content = await owoify(msg);
         }
-        else if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(msg);
 
         if (!content) return;
 
