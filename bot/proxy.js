@@ -32,6 +32,7 @@ module.exports.execute = async (client, msg) => {
         }
 
         if (!content) return;
+        if (content.length > 2000) return msg.channel.send(utils.errorEmbed("All good things in moderation..."));
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)
 
