@@ -14,8 +14,8 @@ module.exports.execute = async (client, msg) => {
         if (err) throw err;
         if (doc == null) return; // If not found, do nothing
 
-        // Check permissions
-        utils.checkPermissions(client, msg, config.permissions.proxy);
+        if (!await utils.ensurePermissions(client, msg, config.permissions.proxy)) return; // Ensure permissions and abort if missing
+
         let content;
         if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
             content = await replaceByKeysmash(doc, msg);
@@ -37,20 +37,22 @@ module.exports.execute = async (client, msg) => {
             content = await owoify(msg);
         }
         else if (doc.autoproxy === true) content = await owoify(msg);
-        if (!content) return;
+
+        if (!content || !msg.attachments.size > 0) return;
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)
-        const name = msg.member.displayName || msg.author.username; // Set the name to either a server nickname or a username
-        const avatar = msg.author.avatarURL; // Get the URL of the user's avatar
 
-        // Construct and send webhook payload
-        const sentMessage = await hook.send(content, {
-            username: name,
-            avatarURL: avatar,
+        // Construct webhook payload options
+        const options = {
+            username: msg.member.displayName || msg.author.username, // Set the name to either a server nickname or a username
+            avatarURL: msg.author.avatarURL, // Get the URL of the user's avatar
+            files: utils.attach(msg.attachments), // Convert message attachments to an array of file objects
             disableEveryone: true
-        });
+        };
+        // Send the complete webhook payload
+        const sentMessage = await hook.send(content, options);
 
-        // Record the resulting message details in the db
+        // Record the resulting message's details in the db
         new message({
             _id: sentMessage.id,
             owner: msg.member.id,

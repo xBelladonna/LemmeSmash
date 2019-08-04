@@ -77,7 +77,8 @@ client.on("message", async msg => {
     } else args = msg.content.slice(config.prefix.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
 
     // Check permissions (if not in DMs)
-    if (msg.channel.type === "text") utils.checkPermissions(client, msg, config.permissions.commands);
+    if (msg.channel.type === "text" && !await utils.ensurePermissions(client, msg, config.permissions.commands))
+        return;
 
     // Parse commands and arguments
     let commandName = args.shift();

@@ -44,8 +44,20 @@ module.exports = {
         });
     },
 
+    attach: attachments => {
+        if (attachments.size == 0) return undefined;
+        let objectArray = []
+        attachments.tap(attachment => {
+            objectArray.push({
+                attachment: attachment.url,
+                name: attachment.filename
+            });
+        });
+        return objectArray;
+    },
+
     // Check permissions and notify if we don't have the ones we need
-    checkPermissions: async (client, msg, flags) => {
+    ensurePermissions: async (client, msg, flags) => {
         let currentPerms = await msg.channel.permissionsFor(client.user);
         let missing = [];
         flags.forEach(flag => {
@@ -54,13 +66,19 @@ module.exports = {
         if (missing.length > 0) {
             let owner = await client.fetchUser(msg.guild.owner);
             // Notify the user if there's missing permissions
-            if (!missing.includes("SEND_MESSAGES")) return msg.channel.send(`I'm missing the following permissions: \n${missing.join("\n")}`)
+            if (!missing.includes("SEND_MESSAGES")) await msg.channel.send(`❌ I can't do that because I'm missing the following permissions:\n• ${missing.join("\n• ")}`);
             // Failing that, DM the server owner
-            else return owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n${missing.join("\n")}`)
-                .catch(err => { // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
-                    return utils.stackTrace(client, msg, new Error("Unable to notify a server owner of missing permissions!\n") + new Error(`Missing permissions in ${msg.guild.name} (${msg.guild.id}):\n${missing.join("\n")}\n\nServer owner: ${owner.tag} (${owner.id})`))
+            else await owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n• ${missing.join("\n• ")}`)
+                .catch(async () => { // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
+                    const err = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n• ${missing.join("\n• ")}\n\nServer owner: ${owner.tag} (${owner.id})`);
+                    const logChannel = await client.channels.get(config.logChannel);
+
+                    console.log(err);
+                    return logChannel.send(err);
                 });
+            return false;
         }
+        return true;
     },
 
     // Traceback logging
