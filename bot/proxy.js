@@ -69,21 +69,21 @@ async function replaceByKeysmash(doc, msg) {
     let content = msg.content.split(" ");
     let charset = [];
     if (doc.keysmash.prefix != null && doc.keysmash.suffix == null) { // If there's a prefix but no suffix
-        pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}([^\\s]*)`, "g"); // Match for tags and prefixed charsets
+        pattern = new RegExp(`${utils.escapeMarkdown(doc.keysmash.prefix)}([^\\s]*)`, "g"); // Match for tags and prefixed charsets
         for (let i = 0; i < content.length; i++) { // Iterate over, creating an array of tags to replace
             match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.prefix.length ? match[i].slice(doc.keysmash.prefix.length, match[i].length) : "");
         }
     }
     else if (doc.keysmash.prefix == null && doc.keysmash.suffix != null) { // Match for suffixes only, the rest is the same as above
-        pattern = new RegExp(`([^\\s]*)${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
+        pattern = new RegExp(`([^\\s]*)${utils.escapeMarkdown(doc.keysmash.suffix)}`, "g");
         for (let i = 0; i < content.length; i++) {
             match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.suffix.length ? match[i].slice(0, match[i].length - doc.keysmash.suffix.length) : "");
         }
     }
     else { // When there's both a prefix and suffix
-        pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}([^\\s]*)${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
+        pattern = new RegExp(`${utils.escapeMarkdown(doc.keysmash.prefix)}([^\\s]*)${utils.escapeMarkdown(doc.keysmash.suffix)}`, "g");
         for (let i = 0; i < content.length; i++) {
             match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.prefix.length + doc.keysmash.suffix.length ? match[i].slice(doc.keysmash.prefix.length, match[i].length - doc.keysmash.suffix.length) : "");

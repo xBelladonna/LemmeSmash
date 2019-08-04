@@ -31,10 +31,10 @@ module.exports = {
         }).catch(err => { throw err });
     },
 
-    // Add escape character ("\") before any special characters that need escaping (in regex)
-    escapeCharacters: string => {
-        if (string == null) throw new TypeError("Empty input to escapeCharacters function!");
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    // Add escape character ("\") before any special characters that need escaping (using regex)
+    escapeMarkdown: string => {
+        if (string == null) throw new TypeError("Empty input to escapeMarkdown function!");
+        return string.replace(/[.*_~`(> )(||)\\]/gm, '\\$&'); // $& means the whole matched string
     },
 
     // Async function that waits for the given number of ms
