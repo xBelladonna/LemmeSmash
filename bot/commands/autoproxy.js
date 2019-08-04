@@ -9,7 +9,7 @@ module.exports = {
     aliases: ["a", "auto", "autowo"],
     description: "Enables automatic proxying to owospeak without using tags",
     usage: [
-        "**\nToggles between enabled and disabled states"
+        "**\nToggles between enabled and disabled states (per-server)"
     ],
     example: "",
     execute: (client, msg, args) => {
@@ -18,8 +18,7 @@ module.exports = {
             if (doc == null) {
                 let newUser = await new user({
                     _id: msg.author.id,
-                    autoproxy: false,
-                    charset: ""
+                    autoproxy: []
                 });
                 doc = newUser;
             }
@@ -33,12 +32,12 @@ module.exports = {
 async function toggleState(user, msg, args) {
     let response;
 
-    if (user.autoproxy === false) {
-        user.autoproxy = true;
-        response = `Enabled autoproxying to owospeak ${keysmash.ISOStandard("sdfghjvb")}`;
+    if (!user.autoproxy.includes(msg.guild.id)) {
+        user.autoproxy.push(msg.guild.id);
+        response = `Enabled autoproxying to owospeak in **${msg.guild.name}** ${keysmash.ISOStandard("sdfghjvb")}`;
     } else {
-        user.autoproxy = false;
-        response = "Disabled autoproxying to owospeak";
+        user.autoproxy = user.autoproxy.filter(id => id !== msg.guild.id);
+        response = `Disabled autoproxying to owospeak in **${msg.guild.name}**`;
     }
 
     return await user.save(err => {

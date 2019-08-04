@@ -28,7 +28,7 @@ module.exports.execute = async (client, msg) => {
             msg.content = await msg.content.slice(doc.owo.prefix.length, -doc.owo.suffix.length == 0 ? msg.content.length : -doc.owo.suffix.length).trim();
             content = await owoify(msg);
         }
-        else if (doc.autoproxy === true) content = await owoify(msg);
+        else if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(msg);
 
         if (!content) return;
 

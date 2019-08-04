@@ -18,10 +18,6 @@ module.exports = {
             if (doc == null) {
                 let newUser = await new user({
                     _id: msg.author.id,
-                    tags: {
-                        prefix: "",
-                        suffix: ""
-                    },
                     charset: ""
                 });
                 doc = newUser;

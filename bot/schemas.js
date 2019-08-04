@@ -13,7 +13,7 @@ module.exports = {
             suffix: { type: String, default: "" }
         },
         charset: { type: String, default: "" },
-        autoproxy: { type: Boolean, default: false }
+        autoproxy: { type: Array, default: [] }
     }),
 
     // Store message ids in the db so we can tell who sent them
