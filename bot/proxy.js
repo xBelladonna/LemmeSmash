@@ -10,7 +10,7 @@ module.exports.execute = async (client, msg) => {
     if (msg.channel.type !== "text")
         return msg.channel.send(`I can't proxy in DMs because webhooks don't exist in them ${keysmash.ISOStandard("sdfghjvb")}`);
 
-    user.findById(msg.author.id, async (err, doc) => { // Get the user document from the db
+    await user.findById(msg.author.id, async (err, doc) => { // Get the user document from the db
         if (err) throw err;
         if (doc == null) return; // If not found, do nothing
 
@@ -24,21 +24,13 @@ module.exports.execute = async (client, msg) => {
         else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
             content = await replaceByKeysmash(doc, msg);
 
-        else if ((doc.owo.prefix != "" && doc.owo.suffix == "") && msg.content.includes(doc.owo.prefix)) {
-            msg.content = await msg.content.slice(1);
-            content = await owoify(msg);
-        }
-        else if ((doc.owo.prefix == "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.suffix)) {
-            msg.content = await msg.content.slice(0, -1);
-            content = await owoify(msg);
-        }
-        else if ((doc.owo.prefix != "" && doc.owo.suffix != "") && msg.content.includes(doc.owo.prefix && doc.owo.suffix)) {
-            msg.content = await msg.content.slice(1, -1);
+        else if (msg.content.startsWith(doc.owo.prefix) && msg.content.endsWith(doc.owo.suffix)) {
+            msg.content = await msg.content.slice(doc.owo.prefix.length, -doc.owo.suffix.length == 0 ? msg.content.length : -doc.owo.suffix.length).trim();
             content = await owoify(msg);
         }
         else if (doc.autoproxy === true) content = await owoify(msg);
 
-        if (!content || !msg.attachments.size > 0) return;
+        if (!content) return;
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)
 
