@@ -16,7 +16,7 @@ module.exports = {
             const githubUrl = "https://github.com/xBelladonna/LemmeSmash"; // GitHub repo
 
             // Basic info about the bot
-            const infoMsg = `LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but you'll be surprised how fun it can be.\nThe bot uses configurable keysmash tags and generates ISO Standard keysmashes using the characters \`${config.defaultCharset}\` by default, or from a set of custom characters you choose.`;
+            const infoMsg = `LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but you'll be surprised how fun it can be.\nThe bot uses configurable keysmash tags and generates ISO Standard keysmashes using the characters \`${config.defaultCharset}\` by default, or from a set of custom characters you choose.\n\nThe bot also helps you on your adventures by letting you make a different set of tags that transforms your message into OwOspeak (or just automatically, per-server, if you want that).`;
 
             const commandList = `The bot has the following commands available. Type \`${config.prefix}help [command name]\` to get info on a specific command.
             ${client.commands.map(command => `\`${config.prefix}${command.name}\` - ${command.description}`).join("\n")}`;
