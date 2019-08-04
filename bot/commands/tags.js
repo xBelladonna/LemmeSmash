@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
+const config = require("../../config.json");
 const utils = require("../utils.js");
+const mongoose = require("mongoose");
 const schemas = require("../schemas.js");
 const user = mongoose.model("user", schemas.user);
 
@@ -43,6 +44,7 @@ module.exports = {
 async function setTags(user, msg, type, args) {
     let tags;
     let response;
+    const tagsConflict = utils.errorEmbed(`You've already used either that prefix or suffix for your ${type} tags! Please try again with different tags or type \`${config.prefix}show\` to see your current settings.`);
 
     if (type == "owospeak") args.shift();
     if (args.length > 0) {
@@ -53,8 +55,16 @@ async function setTags(user, msg, type, args) {
         let prefix = proxy[0].trim() || "";
         let suffix = proxy[1].trim() || "";
         if (prefix == "" && suffix == "") return msg.channel.send(utils.errorEmbed(`Cannot have empty ${type} tags! You must provide either a prefix, a suffix, or both, i.e. \`$text\``));
+        if (type == "keysmash") {
+            if (user.owo && (prefix === (user.owo.prefix || user.owo.suffix) || suffix === (user.owo.prefix || user.owo.suffix)))
+                return msg.channel.send(tagsConflict);
+        }
+        else if (type == "owospeak") {
+            if (user.keysmash && (prefix === (user.keysmash.prefix || user.keysmash.suffix) || suffix === (user.keysmash.prefix || user.keysmash.suffix)))
+                return msg.channel.send(tagsConflict);
+        }
 
-        tags = {
+            tags = {
             prefix: prefix,
             suffix: suffix
         }
