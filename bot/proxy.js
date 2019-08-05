@@ -52,8 +52,18 @@ module.exports.execute = async (client, msg) => {
             owner: msg.member.id,
         }).save();
 
-        await utils.sleep(250); // Wait 0.25 seconds to prevent stuck messages
-        return msg.delete(); // Finally, delete the original message
+        try {
+            await utils.sleep(250); // Wait 0.25 seconds to prevent stuck messages
+            await msg.delete(); // Finally, delete the original message
+        } catch (err) {
+            // Sometimes something deletes the message before we get to it. Bit of an edge case but it happens sometimes, in which case it's not a problem anyway, bail
+            if (err.name === "DiscordAPIError" && err.message === "Unknown Message") return console.log(err);
+            // Otherwise, log the error
+            else {
+                console.error(`\n${new Date().toString()}\nUnable to delete a message due to the following error:\n${err}`);
+                utils.stackTrace(client, msg, err);
+            }
+        }
     });
 }
 
