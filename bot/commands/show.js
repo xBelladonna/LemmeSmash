@@ -31,7 +31,9 @@ module.exports = {
                 tagsOwo = `Prefix: \`${doc.owo.prefix}\`\nSuffix: \`${doc.owo.suffix}\`\nExample: ${doc.owo.prefix}Hello world${doc.owo.suffix}`;
 
             let embed = utils.successEmbed()
-                .setTitle(msg.member.displayName ? `${msg.member.displayName} (${msg.author.tag})` : msg.author.tag);
+                if (msg.member != null)
+                    embed.setTitle(msg.member.displayName ? `${msg.member.displayName} (${msg.author.tag})` : msg.author.tag);
+                else embed.setTitle(msg.author.tag);
                 if (tagsKeysmash != "")
                     embed.addField((doc.owo.prefix =! "" && doc.owo.suffix != "") ? "Keysmash tags" : "Keysmash tag", tagsKeysmash);
                 if (tagsOwo != "")
