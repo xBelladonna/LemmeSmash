@@ -55,6 +55,7 @@ async function setTags(user, msg, type, args) {
         let prefix = proxy[0].trim() || "";
         let suffix = proxy[1].trim() || "";
         if (prefix == "" && suffix == "") return msg.channel.send(utils.errorEmbed(`Cannot have empty ${type} tags! You must provide either a prefix, a suffix, or both, i.e. \`$text\``));
+        /* TODO: Do this properly at some point to check for dupes
         if (type == "keysmash") {
             if (user.owo && (prefix === (user.owo.prefix || user.owo.suffix) || suffix === (user.owo.prefix || user.owo.suffix)))
                 return msg.channel.send(tagsConflict);
@@ -63,6 +64,7 @@ async function setTags(user, msg, type, args) {
             if (user.keysmash && (prefix === (user.keysmash.prefix || user.keysmash.suffix) || suffix === (user.keysmash.prefix || user.keysmash.suffix)))
                 return msg.channel.send(tagsConflict);
         }
+        */
 
             tags = {
             prefix: prefix,
