@@ -19,14 +19,15 @@ module.exports = {
             // Basic info about the bot
             const infoMsg = `LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but you'll be surprised how fun it can be.\nThe bot uses configurable keysmash tags and generates ISO Standard keysmashes using the characters \`${config.defaultCharset}\` by default, or from a set of custom characters you choose.\n\nThe bot also helps you on your adventures by letting you make a different set of tags that transforms your message into OwOspeak (or just automatically, per-server, if you want that).`;
 
+            // Construct command list and filter hidden commands >:3c
             const commandList = `The bot has the following commands available. Type \`${config.prefix}help [command name]\` to get info on a specific command.
-            ${client.commands.map(command => `\`${config.prefix}${command.name}\` - ${command.description}`).join("\n")}`;
+            ${client.commands.filter(command => !command.hidden).map(command => `\`${config.prefix}${command.name}\` - ${command.description}`).join("\n")}`;
 
             // Quick how-to guide
             gettingStarted = `
-            **1.** Set a keysmash tag: \`ks;tags $smash\`
+            **1.** Set a keysmash tag: \`ks;tags $text\`
             **2.** \`[Optional]\` Set a custom character set: \`ks; charset asdfcvbn\`
-            **3.** Post a message with your keysmash tags: \`Here is a keysmash: $\`
+            **3.** Post a message with your keysmash tags: \`Here is a keysmash $ isn't that neat?\`
             Using a set of keysmash tags that you set, it will replace all instances of the tags with a randomly generated keysmash.
             **4.** \`[Bonus!]\` You can also post a set of characters between your keysmash tags and the bot will use those to generate the keysmash instead: \`Here is a one-time custom keysmash: $sdjcbn\``;
 

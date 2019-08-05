@@ -118,6 +118,6 @@ async function setPresence() {
 function gracefulExit() {
     console.warn("\nGracefully shutting down...");
     client.destroy();
-    console.warn("Goodbye!");
+    console.warn("Goodbye!\n");
     process.exit();
 }
