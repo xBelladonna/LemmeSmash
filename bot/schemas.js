@@ -22,5 +22,10 @@ module.exports = {
         _id: String,
         owner: String,
         timestamp: { type: Date, default: Date.now }
+    }),
+
+    guildSettings: new mongoose.Schema({
+        _id: String,
+        unknownCommandMsg: { type: Boolean, default: true }
     })
 }

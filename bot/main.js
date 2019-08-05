@@ -21,7 +21,7 @@ db.once("open", () => {
 });
 
 const schemas = require("./schemas.js"); // Load db schemas into memory
-const user = mongoose.model("user", schemas.user); // Create user model
+const guildSettings = mongoose.model("guildSettings", schemas.guildSettings); // Create guildSettings model
 
 // Instantiate Discord client
 const client = new Discord.Client();
@@ -87,8 +87,15 @@ client.on("message", async msg => {
     commandName = commandName.toLowerCase();
 
     const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
-    // Notify the user if the command was invalid
-    if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`))
+    // Notify the user if the command was invalid (if the notification is enabled for that guild)
+    let unknownCommandMsg;
+    await guildSettings.findById(msg.guild.id, async(err, doc) => {
+        if (doc == null || doc.unknownCommandMsg === true) unknownCommandMsg = true;
+        else if (doc.unknownCommandMsg === false) unknownCommandMsg = false;
+    });
+    if(!command && unknownCommandMsg === true)
+        return await msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`));
+    else if (!command && unknownCommandMsg === false) return;
 
     // Execute command
     try {
