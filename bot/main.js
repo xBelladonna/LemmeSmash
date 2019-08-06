@@ -87,10 +87,14 @@ client.on("message", async msg => {
     commandName = commandName.toLowerCase();
 
     const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
-    // Notify the user if the command was invalid (if the notification is enabled for that guild)
-    if (msg.channel.type === "text") {
+    // Notify the user if the command was invalid
+    if (msg.channel.type === "text") { // In guilds
         let unknownCommandMsg;
-        await guildSettings.findById(msg.guild.id, async (err, doc) => {
+        await guildSettings.findById(msg.guild.id, async (err, doc) => { // Get guild settings
+            if (err) { // Handle errors
+                console.error(err);
+                utils.stackTrace(client, msg, err);
+            }
             if (doc == null || doc.unknownCommandMsg === true) unknownCommandMsg = true;
             else if (doc.unknownCommandMsg === false) unknownCommandMsg = false;
         });
@@ -104,6 +108,7 @@ client.on("message", async msg => {
 
     // Execute command
     try {
+        if (!command) return;
         await command.execute(client, msg, args);
     } catch (err) { // Catch any errors
         console.error(err.stack); // Log error to console
