@@ -6,15 +6,18 @@ const guildSettings = mongoose.model("guildSettings", schemas.guildSettings);
 module.exports = {
     name: "set",
     aliases: ["setting", "settings"],
-    description: "Changes various settings for the server, if you have the Manage Messages permission.\n",
+    description: "Changes various settings for the server, if you have the Manage Messages permission",
     usage: [
-        "UnknownCommand**\nToggles the unknown command message on or off for the guild (command is not case sensitive)"
+        "**\nDisplays the current server's settings",
+        "UnknownCommand**\nToggles the unknown command message on or off for the guild (command is not case-sensitive)"
     ],
     example: "",
     execute: (client, msg, args) => {
-        if (!msg.member.hasPermission("MANAGE_MESSAGES")) return; // If not correct permissions, bail
         guildSettings.findById(msg.guild.id, async (err, doc) => {
             if (err) throw err;
+            if (args.length === 0) return displaySettings(doc, msg, args); // If no arguments, just display the guild's settings, no need to check perms
+            if (!msg.member.hasPermission("MANAGE_MESSAGES")) return; // If not correct permissions, bail
+
             if (doc == null) {
                 let newGuild = await new guildSettings({
                     _id: msg.guild.id,
@@ -22,8 +25,7 @@ module.exports = {
                 });
                 doc = newGuild;
             }
-            if (args[0] === "UnknownCommand".toLowerCase()) return toggleState(doc, msg, args);
-            return displaySettings(doc, msg, args);
+            if (args[0].toLowerCase() === "UnknownCommand".toLowerCase()) return toggleState(doc, msg, args);
         });
     }
 }
