@@ -15,18 +15,14 @@ module.exports.execute = async (client, msg) => {
         if (doc == null) return; // If not found, do nothing
 
         let content;
-        if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
-            content = await replaceByKeysmash(doc, msg);
-        else if ((doc.keysmash.prefix == "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.suffix))
-            content = await replaceByKeysmash(doc, msg);
-        else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
-            content = await replaceByKeysmash(doc, msg);
+        if (matchTags(doc, msg) === true) content = await replaceByKeysmash(doc, msg.content);
 
-        else if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(msg);
+        if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(content != null ? content : msg.content);
         else if (msg.content.startsWith(doc.owo.prefix) && msg.content.endsWith(doc.owo.suffix)) {
             if (doc.owo.prefix === "" && doc.owo.suffix === "") return;
+            if (content != null) msg.content = content;
             msg.content = await msg.content.slice(doc.owo.prefix.length, -doc.owo.suffix.length == 0 ? msg.content.length : -doc.owo.suffix.length).trim();
-            content = await owoify(msg);
+            content = await owoify(msg.content);
         }
 
         if (!content) return;
@@ -57,7 +53,7 @@ module.exports.execute = async (client, msg) => {
             await msg.delete(); // Finally, delete the original message
         } catch (err) {
             // Sometimes something deletes the message before we get to it. Bit of an edge case but it happens sometimes, in which case it's not a problem anyway, bail
-            if (err.name === "DiscordAPIError" && err.message === "Unknown Message") return console.log(err);
+            if (err.name === "DiscordAPIError" && err.message === "Unknown Message") return;
             // Otherwise, log the error
             else {
                 console.error(`\n${new Date().toString()}\nUnable to delete a message due to the following error:\n${err}`);
@@ -68,11 +64,21 @@ module.exports.execute = async (client, msg) => {
 }
 
 
+function matchTags(doc, msg) {
+    if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
+        return true;
+    else if ((doc.keysmash.prefix == "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.suffix))
+        return true;
+    else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
+        return true;
+    else return false;
+}
+
 async function replaceByKeysmash(doc, msg) {
     // Match for prefixes, suffixes, or both, and get the charset if specified with the tag(s)
     let pattern;
     let match = [];
-    let content = msg.content.split(" ");
+    let content = msg.split(" ");
     let charset = [];
     if (doc.keysmash.prefix != null && doc.keysmash.suffix == null) { // If there's a prefix but no suffix
         pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}([^\\s]*)`, "g"); // Match for tags and prefixed charsets
@@ -104,12 +110,12 @@ async function replaceByKeysmash(doc, msg) {
     return content.join(" ");
 }
 
-async function owoify(msg) {
-    if (!msg.content) return;
-    return msg.content.split(" ")
+async function owoify(content) {
+    if (!content) return;
+    return content.split(" ")
         .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
+        .map(x => x.replace(new RegExp("the", "ig"), x => x === x.toUpperCase() ? "DA" : "da"))
         .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
-        .map(x => x.replace(new RegExp("[ts]ion$", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
-        .map(x => x.replace(new RegExp("[ts]ions$", "ig"), x => x === x.toUpperCase() ? "SHUNS" : "shuns"))
+        .map(x => x.replace(new RegExp("[ts]ion", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
         .join(" ");
 }
