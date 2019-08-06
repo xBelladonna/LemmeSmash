@@ -62,22 +62,24 @@ module.exports = {
         flags.forEach(flag => {
             if (!currentPerms.has(flag)) missing.push(flag)
         });
-        if (missing.length > 0) {
-            let owner = await client.fetchUser(msg.guild.owner);
-            // Notify the user if there's missing permissions
-            if (!missing.includes("SEND_MESSAGES")) await msg.channel.send(`❌ I can't do that because I'm missing the following permissions:\n• ${missing.join("\n• ")}`);
-            // Failing that, DM the server owner
-            else await owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n• ${missing.join("\n• ")}`)
-                .catch(async () => { // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
-                    const err = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n• ${missing.join("\n• ")}\n\nServer owner: ${owner.tag} (${owner.id})`);
-                    const logChannel = await client.channels.get(config.logChannel);
 
+        if (missing.length > 0) {
+            let owner = await client.fetchUser(msg.guild.ownerID);
+            // Notify the user if there's missing permissions
+            await msg.channel.send(`❌ I can't do that because I'm missing the following permissions:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
+                // Failing that, DM the server owner
+                await owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
+                    // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
+                    const err = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
+
+                    const logChannel = await client.channels.get(config.logChannel)
                     console.log(err);
                     return logChannel.send(err);
                 });
-            return false;
+            });
+            return false; // We're inside the if block, so return false
         }
-        return true;
+        return true; // If nothing was missing (outside the if block), return true
     },
 
     // Traceback logging
