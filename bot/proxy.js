@@ -114,7 +114,7 @@ async function owoify(content) {
     if (!content) return;
     return content.split(" ")
         .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
-        .map(x => x.replace(new RegExp("the", "ig"), x => x === x.toUpperCase() ? "DA" : "da"))
+        .map(x => x.replace(new RegExp("^the\\b", "ig"), x => x === x.toUpperCase() ? "DA" : "da"))
         .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
         .map(x => x.replace(new RegExp("[ts]ion", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
         .join(" ");
