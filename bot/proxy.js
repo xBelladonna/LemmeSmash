@@ -14,8 +14,6 @@ module.exports.execute = async (client, msg) => {
         if (err) throw err;
         if (doc == null) return; // If not found, do nothing
 
-        if (!await utils.ensurePermissions(client, msg, config.permissions.proxy)) return; // Ensure permissions and abort if missing
-
         let content;
         if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
             content = await replaceByKeysmash(doc, msg);
@@ -32,6 +30,8 @@ module.exports.execute = async (client, msg) => {
         }
 
         if (!content) return;
+        // Ensure permissions and abort if missing
+        if (!await utils.ensurePermissions(client, msg, config.permissions.proxy)) return;
         if (content.length > 2000) return msg.channel.send(utils.errorEmbed("All good things in moderation..."));
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)
