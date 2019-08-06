@@ -26,6 +26,7 @@ module.exports = {
 
     guildSettings: new mongoose.Schema({
         _id: String,
-        unknownCommandMsg: { type: Boolean, default: true }
+        unknownCommandMsg: { type: Boolean, default: true },
+        dmOwner: { type: Boolean, default: true }
     })
 }

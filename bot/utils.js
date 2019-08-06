@@ -1,5 +1,8 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
+const mongoose = require("mongoose");
+const schemas = require("./schemas.js");
+const guildSettings = mongoose.model("guildSettings", schemas.guildSettings);
 
 module.exports = {
     successEmbed: content => {
@@ -67,14 +70,28 @@ module.exports = {
             let owner = await client.fetchUser(msg.guild.ownerID);
             // Notify the user if there's missing permissions
             await msg.channel.send(`❌ I can't do that because I'm missing the following permissions:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
-                // Failing that, DM the server owner
-                await owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
-                    // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
-                    const err = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
+                const logChannel = await client.channels.get(config.logChannel); // Prepare error log channel
+                // Failing that, DM the server owner (if they haven't disabled that)
+                guildSettings.findById(msg.guild.id, async (err, doc) => {
+                    if (err) {
+                        console.error(err);
+                        return logChannel.send(err);
+                    }
+                    if (doc.dmOwner === true) {
+                        await owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
+                            // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
+                            const err = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
 
-                    const logChannel = await client.channels.get(config.logChannel)
-                    console.log(err);
-                    return logChannel.send(err);
+                            console.log(err);
+                            return logChannel.send(err);
+                        });
+                    } else {
+                        // After all that, if the server owner has disabled DMing them for permissions errors, log the error in our log channel
+                        const err = new Error("**DiscordPermissionsError:**\n") + new Error(`The server owner has disabled DMing them about missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
+
+                        console.log(err);
+                        return logChannel.send(err);
+                    }
                 });
             });
             return false; // We're inside the if block, so return false
