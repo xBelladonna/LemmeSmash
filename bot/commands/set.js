@@ -14,7 +14,7 @@ module.exports = {
         "DMOwner**\nToggles DMing the server owner about missing permissions on or off (not case-sensitive)"
     ],
     example: "",
-    execute: (client, msg, args) => {
+    execute: (msg, args) => {
         if (msg.channel.type !== "text")
             return msg.channel.send(utils.errorEmbed("This command only works in servers!"));
         guildSettings.findById(msg.guild.id, async (err, doc) => {

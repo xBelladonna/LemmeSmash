@@ -7,12 +7,12 @@ module.exports = {
     name: "help",
     aliases: ["h", "info", "invite"],
     description: "Shows my help card to help you get started",
-    execute: async (client, msg, args) => {
+    execute: async (msg, args) => {
         const commands = msg.client.commands; // Load commands into memory
         if (!args.length) { // If the command is issued on its own
             const flags = config.permissions.proxy.concat(config.permissions.commands); // Compile permission flags into a single array
 
-            const inviteUrl = await client.generateInvite(flags); // Generate invite URL with proper permissions
+            const inviteUrl = await msg.client.generateInvite(flags); // Generate invite URL with proper permissions
             const serverUrl = "https://discord.gg/N5cBcp3";
             const githubUrl = "https://github.com/xBelladonna/LemmeSmash"; // GitHub repo
 
@@ -21,7 +21,7 @@ module.exports = {
 
             // Construct command list and filter hidden commands >:3c
             const commandList = `The bot has the following commands available. Type \`${config.prefix}help [command name]\` to get info on a specific command.
-            ${client.commands.filter(command => !command.hidden).map(command => `\`${config.prefix}${command.name}\` - ${command.description}`).join("\n")}`;
+            ${msg.client.commands.filter(command => !command.hidden).map(command => `\`${config.prefix}${command.name}\` - ${command.description}`).join("\n")}`;
 
             // Quick how-to guide
             gettingStarted = `
@@ -35,7 +35,7 @@ module.exports = {
             footnotes = "• You can also find out who sent a proxied message by reacting to it with ❓\n• You can delete proxied messages you sent by reacting to them with ❌";
 
             // Construct the embed to send
-            let author = await client.user;
+            let author = await msg.client.user;
             let guildMember = msg.channel.type === "text" ? await msg.guild.fetchMember(author) : undefined;
             embed = utils.successEmbed()
                 .setColor("#ffaa00")

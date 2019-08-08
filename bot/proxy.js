@@ -6,7 +6,7 @@ const config = require("../config.json");
 const utils = require("./utils.js");
 const keysmash = require("./keysmash.js");
 
-module.exports.execute = async (client, msg) => {
+module.exports.execute = async msg => {
     if (msg.channel.type !== "text")
         return msg.channel.send(`I can't proxy in DMs because webhooks don't exist in them ${keysmash.ISOStandard("sdfghjvb")}`);
 
@@ -27,10 +27,10 @@ module.exports.execute = async (client, msg) => {
 
         if (!content) return;
         // Ensure permissions and abort if missing
-        if (!await utils.ensurePermissions(client, msg, config.permissions.proxy)) return;
+        if (!await utils.ensurePermissions(msg, config.permissions.proxy)) return;
         if (content.length > 2000) return msg.channel.send(utils.errorEmbed("All good things in moderation..."));
 
-        const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)
+        const hook = await utils.getWebhook(msg.client, msg.channel); // Get the webhook (or create one if it doesn't exist)
 
         // Construct webhook payload options
         const options = {
@@ -57,7 +57,7 @@ module.exports.execute = async (client, msg) => {
             // Otherwise, log the error
             else {
                 console.error(`\n${new Date().toString()}\nUnable to delete a message due to the following error:\n${err}`);
-                utils.stackTrace(client, msg, err);
+                utils.stackTrace(msg.client, msg, err);
             }
         }
     });

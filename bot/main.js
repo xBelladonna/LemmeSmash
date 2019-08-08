@@ -66,7 +66,7 @@ reactions.execute(client);
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
     if (!msg.content.startsWith(config.prefix) && !msg.content.startsWith(client.user))
-        return proxy.execute(client, msg); // Proxy messages first, if applicable
+        return proxy.execute(msg); // Proxy messages first, if applicable
     // Then execute any commands the user issued
     let args;
 
@@ -77,7 +77,7 @@ client.on("message", async msg => {
     } else args = msg.content.slice(config.prefix.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
 
     // Check permissions (if not in DMs)
-    if (msg.channel.type === "text" && !await utils.ensurePermissions(client, msg, config.permissions.commands))
+    if (msg.channel.type === "text" && !await utils.ensurePermissions(msg, config.permissions.commands))
         return;
 
     // Parse commands and arguments
@@ -112,7 +112,7 @@ client.on("message", async msg => {
     // Execute command if it exists
     if (!command) return;
     try {
-        await command.execute(client, msg, args);
+        await command.execute(msg, args);
     } catch (err) { // Catch any errors
         console.error(err.stack); // Log error to console
         msg.channel.send(utils.errorEmbed("Encountered an error while trying to execute that command!")); // Notify the user

@@ -12,7 +12,7 @@ module.exports = {
         "<characters>**\nSets your custom character set to the characters you specify"
     ],
     example: "asdfcvbn",
-    execute: (client, msg, args) => {
+    execute: (msg, args) => {
         user.findById(msg.author.id, async (err, doc) => {
             if (err) throw err;
             if (doc == null) {

@@ -9,7 +9,7 @@ module.exports = {
     description: "Shows your user card with your owo tags and custom character set",
     usage: "",
     example: "",
-    execute: (client, msg, args) => {
+    execute: (msg, args) => {
         user.findById(args.length > 0 && args.length < 2 ? args[0] : msg.author.id, async (err, doc) => {
             if (err) throw err;
             if (doc == null) return msg.channel.send(utils.errorEmbed(`${args.length > 0 && args.length < 2 ? "That user has" : "You have"} not set any tags or a custom character set. Type \`ks;help\` to get started!`));
