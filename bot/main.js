@@ -88,27 +88,30 @@ client.on("message", async msg => {
 
     const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
     // Notify the user if the command was invalid
-    if (msg.channel.type === "text") { // In guilds
-        let unknownCommandMsg;
-        await guildSettings.findById(msg.guild.id, async (err, doc) => { // Get guild settings
-            if (err) { // Handle errors
-                console.error(err);
-                utils.stackTrace(client, msg, err);
-            }
-            if (doc == null || doc.unknownCommandMsg === true) unknownCommandMsg = true;
-            else if (doc.unknownCommandMsg === false) unknownCommandMsg = false;
-        });
-        if (!command && unknownCommandMsg === true)
-            return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`));
-        else if (!command && unknownCommandMsg === false) return;
-    }
-    else if (!msg.channel.type === "text") {
-        if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`));
-    }
+    await new Promise(async resolve => {
+        if (msg.channel.type === "text") { // In guilds
+            let unknownCommandMsg;
+            await guildSettings.findById(msg.guild.id, async (err, doc) => { // Get guild settings
+                if (err) { // Handle errors
+                    console.error(err);
+                    utils.stackTrace(client, msg, err);
+                }
+                if (doc == null || doc.unknownCommandMsg === true) unknownCommandMsg = true;
+                else if (doc.unknownCommandMsg === false) unknownCommandMsg = false;
+            });
+            if (!command && unknownCommandMsg === true)
+                return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`));
+            else if (!command && unknownCommandMsg === false) return;
+        }
+        else if (msg.channel.type !== "text") {
+            if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`));
+        }
+        resolve();
+    });
 
-    // Execute command
+    // Execute command if it exists
+    if (!command) return;
     try {
-        if (!command) return;
         await command.execute(client, msg, args);
     } catch (err) { // Catch any errors
         console.error(err.stack); // Log error to console

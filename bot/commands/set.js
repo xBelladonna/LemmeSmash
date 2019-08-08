@@ -17,16 +17,15 @@ module.exports = {
     execute: (client, msg, args) => {
         guildSettings.findById(msg.guild.id, async (err, doc) => {
             if (err) throw err;
+            if (doc == null) {
+                doc = await new guildSettings({
+                    _id: msg.guild.id,
+                    unknownCommandMsg: true,
+                    dmOwner: true
+                });
+            }
             if (args.length === 0) return displaySettings(doc, msg, args); // If no arguments, just display the guild's settings, no need to check perms
             if (!msg.member.hasPermission("MANAGE_MESSAGES")) return; // If not correct permissions, bail
-
-            if (doc == null) {
-                let newGuild = await new guildSettings({
-                    _id: msg.guild.id,
-                    unknownCommandMsg: true
-                });
-                doc = newGuild;
-            }
 
             switch (args[0].toLowerCase()) {
                 case "UnknownCommand".toLowerCase():

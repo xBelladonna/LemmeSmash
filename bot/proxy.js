@@ -112,7 +112,7 @@ async function replaceByKeysmash(doc, msg) {
 
 async function owoify(content) {
     if (!content) return;
-    return content.split(" ")
+    return await content.split(" ")
         .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
         .map(x => x.replace(new RegExp("^the\\b", "ig"), x => x === x.toUpperCase() ? "DA" : "da"))
         .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))

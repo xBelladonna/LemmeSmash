@@ -27,7 +27,7 @@ module.exports = {
             let webhooks = await channel.guild.fetchWebhooks();
             let hook;
             webhooks = webhooks.filter(hook => hook.channelID === channel.id);
-            if (webhooks.find(hook => hook.owner.id === client.user.id) == null)
+            if (webhooks.find(hook => hook.owner.id === client.user.id) == null || webhooks.find(hook => hook.owner) == undefined)
                 hook = await channel.createWebhook("LemmeSmash");
             else hook = await webhooks.find(hook => hook.owner.id === client.user.id);
             return resolve(hook);
@@ -70,12 +70,26 @@ module.exports = {
             let owner = await client.fetchUser(msg.guild.ownerID);
             // Notify the user if there's missing permissions
             await msg.channel.send(`❌ I can't do that because I'm missing the following permissions:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
-                const logChannel = await client.channels.get(config.logChannel); // Prepare error log channel
                 // Failing that, DM the server owner (if they haven't disabled that)
-                guildSettings.findById(msg.guild.id, async (err, doc) => {
+                const logChannel = await client.channels.get(config.logChannel) || undefined; // Prepare error log channel
+                await guildSettings.findById(msg.guild.id, async (err, doc) => {
                     if (err) {
                         console.error(err);
-                        return logChannel.send(err);
+                        if (logChannel) logChannel.send(err);
+                        return false;
+                    }
+                    if (doc == null) {
+                        doc = await new guildSettings({
+                            _id: msg.guild.id,
+                            unknownCommandMsg: true,
+                            dmOwner: true
+                        });
+                        await doc.save(err => {
+                            if (err) {
+                                console.error(err);
+                                if (logChannel) logChannel.send(err);
+                            }
+                        });
                     }
                     if (doc.dmOwner === true) {
                         await owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
@@ -83,20 +97,20 @@ module.exports = {
                             const err = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
 
                             console.log(err);
-                            return logChannel.send(err);
+                            if (logChannel) logChannel.send(err);
                         });
                     } else {
                         // After all that, if the server owner has disabled DMing them for permissions errors, log the error in our log channel
                         const err = new Error("**DiscordPermissionsError:**\n") + new Error(`The server owner has disabled DMing them about missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
 
                         console.log(err);
-                        return logChannel.send(err);
+                        if (logChannel) logChannel.send(err);
                     }
                 });
             });
             return false; // We're inside the if block, so return false
         }
-        return true; // If nothing was missing (outside the if block), return true
+        else return true; // If nothing was missing (outside the if block), return true
     },
 
     // Traceback logging
