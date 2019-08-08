@@ -69,7 +69,9 @@ module.exports = {
         if (missing.length > 0) {
             let owner = await client.fetchUser(msg.guild.ownerID);
             // Notify the user if there's missing permissions
-            await msg.channel.send(`❌ I can't do that because I'm missing the following permissions:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
+            await msg.channel.send(new Discord.RichEmbed()
+                .setColor("#ff2200")
+                .setDescription(`❌ I can't do that because I'm missing the following permissions:\n\`• ${missing.join("\n• ")}\``)).catch(async () => {
                 // Failing that, DM the server owner (if they haven't disabled that)
                 const logChannel = await client.channels.get(config.logChannel) || undefined; // Prepare error log channel
                 await guildSettings.findById(msg.guild.id, async (err, doc) => {
@@ -92,7 +94,10 @@ module.exports = {
                         });
                     }
                     if (doc.dmOwner === true) {
-                        await owner.send(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``).catch(async () => {
+                        await owner.send(new Discord.RichEmbed()
+                            .setColor("#ff2200")
+                            .setDescription(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``)
+                            .setFooter(`You can enable/disable these notifications by typing \`${config.prefix}set DMOwner\``)).catch(async () => {
                             // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
                             const err = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
 
