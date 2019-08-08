@@ -13,6 +13,8 @@ module.exports = {
     ],
     example: "",
     execute: (client, msg, args) => {
+        if (msg.channel.type !== "text")
+            return msg.channel.send(utils.errorEmbed("This command only works in servers!"));
         user.findById(msg.author.id, async (err, doc) => {
             if (err) throw err;
             if (doc == null) {
