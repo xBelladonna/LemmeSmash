@@ -23,7 +23,7 @@ module.exports = {
 
         const client = msg.client;
 
-        if (msg.member.id == config.owner) {
+        if (msg.author.id == config.owner) {
             if (args.length === 0) return utils.errorEmbed(msg.channel.send("You need to provide code to evaluate!"));
 
             const code = args.join(" ");
