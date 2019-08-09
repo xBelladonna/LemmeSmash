@@ -27,7 +27,7 @@ module.exports = {
             let webhooks = await channel.guild.fetchWebhooks();
             let hook;
             webhooks = webhooks.filter(hook => hook.channelID === channel.id);
-            if (webhooks.find(hook => hook.owner.id === client.user.id) == null || webhooks.find(hook => hook.owner) == undefined)
+            if (webhooks.find(hook => hook.owner) == undefined || webhooks.find(hook => hook.owner.id === client.user.id) == null)
                 hook = await channel.createWebhook("LemmeSmash");
             else hook = await webhooks.find(hook => hook.owner.id === client.user.id);
             return resolve(hook);
