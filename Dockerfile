@@ -6,5 +6,4 @@ ADD package.json /app
 ADD package-lock.json /app
 ADD bot /app/bot
 
-RUN npm install
-RUN npm install -g pm2
+RUN npm install && npm install -g pm2
