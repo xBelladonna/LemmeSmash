@@ -14,7 +14,7 @@ module.exports = {
         "owo <prefix>text<suffix>**\nSets your owospeak tag(s). Same as above."
     ],
     example: "#!text",
-    execute: (msg, args) => {
+    execute: (client, msg, args) => {
         user.findById(msg.author.id, async (err, doc) => {
             if (err) throw err;
             if (doc == null) {

@@ -8,7 +8,7 @@ module.exports = {
     hidden: true,
     usage: [],
     example: [],
-    execute: async (msg, args) => {
+    execute: async (client, msg, args) => {
         const channel = args[0];
 
         // This method proxies messages as the bot so owners can "say" things through the bot.
@@ -20,7 +20,7 @@ module.exports = {
                 args.shift();
                 const message = args.join(" ");
                 try {
-                    await msg.client.channels.get(channel).send(message);
+                    await client.channels.get(channel).send(message);
                     return msg.channel.send("Message sent successfully!");
                 } catch (err) {
                     console.error(`Unable to send message to ${channel} due to lack of permissions:\n${err}`)

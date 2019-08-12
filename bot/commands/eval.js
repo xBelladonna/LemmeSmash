@@ -8,7 +8,7 @@ module.exports = {
     hidden: true,
     usage: ["<JavaScript code here>**\nExecutes the message as is, and throws any errors/responses into the channel"],
     example: "msg.channel.send(\"Hello World!\");",
-    execute: async (msg, args) => {
+    execute: async (client, msg, args) => {
         /*
         ** WARNING: THIS METHOD EVALUATES MESSAGE CONTENT AS RAW JAVASCRIPT CODE!
         ** This means that, since node.js has access to your computer's hard drive, this
@@ -20,8 +20,6 @@ module.exports = {
         ** With that said, this command is meant strictly for debugging problems without suffering downtime.
         ** Use it wisely and DO NOT do anything that would break the Discord Terms of Service.
         */
-
-        const client = msg.client;
 
         if (msg.author.id == config.owner) {
             if (args.length === 0) return utils.errorEmbed(msg.channel.send("You need to provide code to evaluate!"));
