@@ -3,6 +3,7 @@ const config = require("../config.json");
 const mongoose = require("mongoose");
 const schemas = require("./schemas.js");
 const guildSettings = mongoose.model("guildSettings", schemas.guildSettings);
+const webhooks = mongoose.model("webhooks", schemas.webhooks);
 
 module.exports = {
     successEmbed: content => {
@@ -24,14 +25,45 @@ module.exports = {
     // Webhook getter
     getWebhook: async (client, channel) => {
         return new Promise(async resolve => {
-            let webhooks = await channel.guild.fetchWebhooks();
             let hook;
-            webhooks = webhooks.filter(hook => hook.channelID === channel.id);
-            if (webhooks.find(hook => hook.owner !== undefined && hook.owner.id === client.user.id) == null)
-                hook = await channel.createWebhook("LemmeSmash");
-            else hook = await webhooks.find(hook => hook.owner.id === client.user.id);
-            return resolve(hook);
-        }).catch(err => { throw err });
+            try {
+                await webhooks.findOne({ channel: channel.id }, async (err, doc) => {
+                    if (err) throw err;
+                    if (doc == null) {
+                        hook = await channel.createWebhook("LemmeSmash");
+                        await new webhooks({
+                            id: hook.id,
+                            channel: channel.id
+                        }).save(err => {
+                            if (err) throw err;
+                        });
+                        return resolve(hook);
+                    }
+                    else hook = await client.fetchWebhook(doc.id).catch(async e => {
+                        if (e.name === "DiscordAPIError" && e.message === "Unknown Webhook") {
+                            hook = await channel.createWebhook("LemmeSmash");
+                            await webhooks.findOne({ channel: channel.id }, async (err, doc) => {
+                                if (err) throw err;
+
+                                doc.id = hook.id;
+                                doc.channel = channel.id;
+                                await doc.save(err => {
+                                    if (err) throw err;
+                                });
+                            });
+                            resolve(hook);
+                        }
+                    }).catch(e => { throw e; });
+                    resolve(hook);
+                }).catch(e => { throw e; });
+            } catch (e) {
+                console.error(`\n${new Date().toString()}\nUnable to get webhook for channel ID ${channel.id} due to the following error:\n${e.stack}`);
+                if (config.logChannel) {
+                    const logChannel = await client.channels.get(config.logChannel);
+                    return await logChannel.send(e);
+                }
+            }
+        });
     },
 
     // Add escape character ("\") before any special characters that need escaping (using regex)
@@ -59,21 +91,21 @@ module.exports = {
     },
 
     // Check permissions and notify if we don't have the ones we need
-    ensurePermissions: async (msg, flags) => {
-        let currentPerms = await msg.channel.permissionsFor(msg.client.user);
+    ensurePermissions: async (client, msg, flags) => {
+        let currentPerms = await msg.channel.permissionsFor(client.user);
         let missing = [];
         flags.forEach(flag => {
             if (!currentPerms.has(flag)) missing.push(flag)
         });
 
         if (missing.length > 0) {
-            let owner = await msg.client.fetchUser(msg.guild.ownerID);
+            let owner = await client.fetchUser(msg.guild.ownerID);
             // Notify the user if there's missing permissions
             await msg.channel.send(new Discord.RichEmbed()
                 .setColor("#ff2200")
                 .setDescription(`❌ I can't do that because I'm missing the following permissions:\n\`• ${missing.join("\n• ")}\``)).catch(async () => {
                 // Failing that, DM the server owner (if they haven't disabled that)
-                const logChannel = await msg.client.channels.get(config.logChannel) || undefined; // Prepare error log channel
+                const logChannel = await client.channels.get(config.logChannel) || undefined; // Prepare error log channel
                 await guildSettings.findById(msg.guild.id, async (err, doc) => {
                     if (err) {
                         console.error(err);

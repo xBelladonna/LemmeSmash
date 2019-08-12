@@ -16,6 +16,12 @@ module.exports = {
         autoproxy: { type: Array, default: [] }
     }),
 
+    guildSettings: new mongoose.Schema({
+        _id: String,
+        unknownCommandMsg: { type: Boolean, default: true },
+        dmOwner: { type: Boolean, default: true }
+    }),
+
     // Store message ids in the db so we can tell who sent them
     // Enables users to delete their own messages and makes it possible to query the owner of a message
     message: new mongoose.Schema({
@@ -24,9 +30,9 @@ module.exports = {
         timestamp: { type: Date, default: Date.now }
     }),
 
-    guildSettings: new mongoose.Schema({
-        _id: String,
-        unknownCommandMsg: { type: Boolean, default: true },
-        dmOwner: { type: Boolean, default: true }
+    // Store webhook ids so we can fetch them reliably
+    webhooks: new mongoose.Schema({
+        id: String,
+        channel: String
     })
 }
