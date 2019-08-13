@@ -26,6 +26,7 @@ module.exports = {
     // Enables users to delete their own messages and makes it possible to query the owner of a message
     message: new mongoose.Schema({
         _id: String,
+        original: String,
         owner: String,
         timestamp: { type: Date, default: Date.now }
     }),

@@ -47,7 +47,7 @@ module.exports.execute = async client => {
 
 async function queryMessage(react, user, client) {
     await message.findById(react.message.id).then(async doc => {
-        if (doc == null) return; // If the message wasn't a proxied message, do nothing
+        if (doc == null || doc._id !== react.message.id) return; // If the message wasn't a proxied message, do nothing
         react.remove(user.id); // Remove the reaction ASAP
 
         const owner = await client.fetchUser(doc.owner);
@@ -55,7 +55,7 @@ async function queryMessage(react, user, client) {
             .setAuthor(owner.tag, owner.avatarURL)
             .setDescription(react.message.content)
             .addField("Sent by", `${owner} (ID: ${owner.id})`)
-            .setFooter("Sent:")
+            .setFooter(`Message ID: ${react.message.id} | Original message ID: ${doc.original} | Sent`)
             .setTimestamp(doc.timestamp);
 
         try {
@@ -64,8 +64,7 @@ async function queryMessage(react, user, client) {
             if (e.code === 50007) {
                 const msg = await react.message.channel
                     .send(`I can't DM you ${user}, please check your privacy settings ${keysmash.ISOStandard("sdfghjb")}`);
-                await utils.sleep(10 * 1000);
-                msg.delete();
+                await msg.delete(10 * 1000);
             }
             else throw e;
         }

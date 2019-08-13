@@ -47,11 +47,11 @@ module.exports.execute = async (client, msg) => {
             // Record the resulting message's details in the db
             await new message({
                 _id: sentMessage.id,
+                original: msg.id,
                 owner: msg.member.id,
             }).save();
 
-            await utils.sleep(250); // Wait 0.25 seconds to prevent stuck messages
-            await msg.delete(); // Finally, delete the original message
+            await msg.delete(250); // Wait 0.25 seconds before yeeting to prevent stuck message
         } catch (e) {
             // Sometimes something deletes the message before we get to it. Bit of an edge case but it happens sometimes, in which case it's not a problem anyway, bail
             if (e.code === 10008) return;
