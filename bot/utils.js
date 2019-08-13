@@ -33,7 +33,7 @@ module.exports = {
                         id: hook.id,
                         channel: channel.id
                     }).save();
-                    return resolve(hook);
+                    return hook;
                 }
                 else hook = await client.fetchWebhook(doc.id).catch(async e => {
                     if (e.code === 10015) {
@@ -43,11 +43,10 @@ module.exports = {
                             doc.channel = channel.id;
                             await doc.save();
                         });
-                        resolve(hook);
+                        return hook;
                     }
                     else throw e;
                 });
-                resolve(hook);
             });
         } catch (e) {
             return e;
