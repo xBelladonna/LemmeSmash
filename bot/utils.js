@@ -26,7 +26,7 @@ module.exports = {
     getWebhook: async (client, channel) => {
         let hook;
         try {
-            await webhooks.findOne({ channel: channel.id }).then(async doc => {
+            return await webhooks.findOne({ channel: channel.id }).then(async doc => {
                 if (doc == null) {
                     hook = await channel.createWebhook("LemmeSmash");
                     await new webhooks({

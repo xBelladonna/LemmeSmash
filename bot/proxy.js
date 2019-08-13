@@ -41,7 +41,6 @@ module.exports.execute = async (client, msg) => {
         };
 
         try {
-
             // Send the complete webhook payload
             const sentMessage = await hook.send(content, options);
 
