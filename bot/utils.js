@@ -47,6 +47,7 @@ module.exports = {
                     }
                     else throw e;
                 });
+                return hook;
             });
         } catch (e) {
             return e;
