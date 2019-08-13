@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const utils = require("../utils.js");
 const config = require("../../config.json");
+const defaultPrefix = config.prefix[0].toLowerCase();
 
 
 module.exports = {
@@ -20,8 +21,8 @@ module.exports = {
             const infoMsg = `LemmeSmash is a Discord bot that lets you put placeholder tags in your messages and replaces your message, swapping the tags out for randomly generated keysmashes. Why would anyone want this? Beats me, but you'll be surprised how fun it can be.\nThe bot uses configurable keysmash tags and generates ISO Standard keysmashes using the characters \`${config.defaultCharset}\` by default, or from a set of custom characters you choose.\n\nThe bot also helps you on your adventures by letting you make a different set of tags that transforms your message into OwOspeak (or just automatically, per-server, if you want that).`;
 
             // Construct command list and filter hidden commands >:3c
-            const commandList = `The bot has the following commands available. Type \`${config.prefix}help [command name]\` to get info on a specific command.
-            ${client.commands.filter(command => !command.hidden).map(command => `\`${config.prefix}${command.name}\` - ${command.description}`).join("\n")}`;
+            const commandList = `The bot has the following commands available. Type \`${defaultPrefix}help [command name]\` to get info on a specific command.
+            ${client.commands.filter(command => !command.hidden).map(command => `\`${defaultPrefix}${command.name}\` - ${command.description}`).join("\n")}`;
 
             // Quick how-to guide
             gettingStarted = `
@@ -47,7 +48,7 @@ module.exports = {
                 .addField("Add me!", `[Click here to invite the the bot to your server!](${inviteUrl})`)
                 .addField("Get help and support!", `[Click here to join the support server!](${serverUrl})`)
                 .addField("See my code!", `[Click here to visit the GitHub repository!](${githubUrl})`)
-                .setFooter(`Type \`${config.prefix}help [command name]\` to get info on a specific command!`);
+                .setFooter(`Type \`${defaultPrefix}help [command name]\` to get info on a specific command!`);
 
             // Finally, yeet it into the channel
             return msg.channel.send(embed);
@@ -58,27 +59,27 @@ module.exports = {
         const name = args[0].toLowerCase();
         const command = commands.get(name) || commands.find(command => command.aliases && command.aliases.includes(name));
 
-        if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${name}\`. For a list of commands, type \`${config.prefix} help\`, or just ping me!`));
+        if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${name}\`. For a list of commands, type \`${defaultPrefix} help\`, or just ping me!`));
 
         data.push(`**Name:** ${command.name}`);
 
         embed = utils.warnEmbed()
-            .setFooter(`Type \`${config.prefix}help [command name]\` to get info on a specific command!`);
+            .setFooter(`Type \`${defaultPrefix}help [command name]\` to get info on a specific command!`);
         embed.addField("Command:", command.name);
         if (command.aliases) embed.addField(`Aliases:`, `${command.aliases.join(', ')}`);
         if (command.description) embed.addField(`Description:`, `${command.description}`);
         if (command.usage) {
             usage = "";
             for (var i = 0; i < command.usage.length; i++) {
-                if (i < command.usage.length && usage.length + `\n**${config.prefix}${command.name}  ${command.usage[i]}`.length > 1024) {
+                if (i < command.usage.length && usage.length + `\n**${defaultPrefix}${command.name}  ${command.usage[i]}`.length > 1024) {
                     embed.addField("Usage:", usage);
                     usage = "";
                 }
-                usage += `\n**${config.prefix}${command.name}  ${command.usage[i]}`;
+                usage += `\n**${defaultPrefix}${command.name}  ${command.usage[i]}`;
             }
             embed.addField("Usage:", usage);
         }
-        if (command.example) embed.addField(`Example:`, `${config.prefix}${command.name} ${command.example}`);
+        if (command.example) embed.addField(`Example:`, `${defaultPrefix}${command.name} ${command.example}`);
 
         return msg.channel.send(embed);
     }

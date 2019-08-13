@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
+const defaultPrefix = config.prefix[0].toLowerCase();
 const utils = require("./utils.js");
 const reactions = require('./reactions.js');
 const fs = require("fs");
@@ -63,7 +64,13 @@ reactions.execute(client);
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
     const mention = new RegExp(`^\s*<@[!&]?${client.user.id}>\s*`);
-    if (!msg.content.startsWith(config.prefix) && !mention.test(msg.content)) {
+    let match;
+    await config.prefix.forEach(prefix => {
+        prefix = prefix.toLowerCase();
+        if (msg.content.toLowerCase().startsWith(prefix)) match = prefix;
+    });
+
+    if (!msg.content.toLowerCase().startsWith(match) && !mention.test(msg.content)) {
         try {
             return await proxy.execute(client, msg); // Proxy messages first, if applicable
         } catch (e) { // Catch any errors
@@ -80,8 +87,8 @@ client.on("message", async msg => {
         args = msg.content.replace(mention, "").split(/ +/);
         if (args.length === 1 && args[0] === "") args[0] = "help"; // We set the first arg to "help" if there are no args (i.e. a ping on its own)
     }
-    else if (msg.content.startsWith(config.prefix))
-        args = msg.content.slice(config.prefix.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
+    else if (msg.content.toLowerCase().startsWith(match))
+        args = msg.content.slice(match.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
     else return; // Just do nothing if the message doesn't start with ping or prefix
 
     // Check permissions (if not in DMs)
@@ -100,7 +107,7 @@ client.on("message", async msg => {
         const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
         // Notify the user if the command was invalid
         if (!command) {
-            let notification = `Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`;
+            let notification = `Unknown command \`${commandName}\`. For a list of commands, type \`${defaultPrefix}help\`, or just ping me!`;
             if (notification.length > 2048) notification = utils.warnEmbed("That's not funny.");
             else notification = utils.errorEmbed(notification);
 
@@ -136,7 +143,7 @@ process.on("SIGTERM", gracefulExit);
 
 // Set bot user presence status
 async function setPresence() {
-    client.user.setActivity(client.guilds.size <= 1 ? `${config.prefix}help` : `${config.prefix}help | in ${client.guilds.size} servers`, { type: "PLAYING" });
+    client.user.setActivity(client.guilds.size <= 1 ? `${defaultPrefix}help` : `${defaultPrefix}help | in ${client.guilds.size} servers`, { type: "PLAYING" });
 }
 
 // Log out of Discord and exit gracefully

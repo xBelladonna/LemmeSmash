@@ -3,6 +3,7 @@ const utils = require("../utils.js");
 const mongoose = require("mongoose");
 const schemas = require("../schemas.js");
 const user = mongoose.model("user", schemas.user);
+const defaultPrefix = config.prefix[0].toLowerCase();
 
 module.exports = {
     name: "tags",
@@ -46,7 +47,7 @@ module.exports = {
 async function setTags(user, msg, type, args) {
     let tags;
     let response;
-    const tagsConflict = utils.errorEmbed(`You've already used either that prefix or suffix for your ${type} tags! Please try again with different tags or type \`${config.prefix}show\` to see your current settings.`);
+    const tagsConflict = utils.errorEmbed(`You've already used either that prefix or suffix for your ${type} tags! Please try again with different tags or type \`${defaultPrefix}show\` to see your current settings.`);
 
     if (type === "owospeak") args.shift();
     if (args.length > 0) {

@@ -3,6 +3,7 @@ const config = require("../../config.json");
 const utils = require("../utils.js");
 const schemas = require("../schemas.js");
 const guildSettings = mongoose.model("guildSettings", schemas.guildSettings);
+const defaultPrefix = config.prefix[0].toLowerCase();
 
 module.exports = {
     name: "set",
@@ -43,8 +44,8 @@ module.exports = {
 async function displaySettings(doc, msg, args) {
     let embed = utils.successEmbed()
         .setAuthor(`Settings for ${msg.guild.name}`, msg.guild.iconURL)
-        .addField("Unknown command errors:", `${doc.unknownCommandMsg === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type \`${config.prefix}set UnknownCommand\``)
-        .addField("DM owner about missing permissions:" ,`${doc.dmOwner === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type \`${config.prefix}set DMOwner\``);
+        .addField("Unknown command errors:", `${doc.unknownCommandMsg === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type \`${defaultPrefix}set UnknownCommand\``)
+        .addField("DM owner about missing permissions:" ,`${doc.dmOwner === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type \`${defaultPrefix}set DMOwner\``);
     return msg.channel.send(embed);
 }
 

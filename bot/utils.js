@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
+const defaultPrefix = config.prefix[0].toLowerCase();
 const mongoose = require("mongoose");
 const schemas = require("./schemas.js");
 const guildSettings = mongoose.model("guildSettings", schemas.guildSettings);
@@ -116,7 +117,7 @@ module.exports = {
                             await owner.send(new Discord.RichEmbed()
                                 .setColor("#ff2200")
                                 .setDescription(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``)
-                                .setFooter(`You can enable/disable these notifications by typing \`${config.prefix}set DMOwner\``)).catch(async () => {
+                                .setFooter(`You can enable/disable these notifications by typing \`${defaultPrefix}set DMOwner\``)).catch(async () => {
                                     // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
                                     const e = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
 
