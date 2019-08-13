@@ -33,11 +33,11 @@ module.exports.execute = async (client, msg) => {
         if (hook instanceof Error) throw hook;
 
         // Construct webhook payload options
-        let username = msg.member.displayName || msg.author.username;
+        const username = msg.member.displayName.length >= 2 ? msg.member.displayName : `${msg.member.displayName} (${msg.author.username})`;
         if (username.length < 2) return msg.channel.send(utils.warnEmbed("Username/nickname must be at least 2 characters long for that to work"));
 
         const options = {
-            username: username, // Set the name to either a server nickname or a username
+            username: username, // Set the name to either a server nickname (if exists) or a username
             avatarURL: msg.author.avatarURL, // Get the URL of the user's avatar
             files: await utils.attach(msg.attachments), // Convert message attachments to an array of file objects
             disableEveryone: true
