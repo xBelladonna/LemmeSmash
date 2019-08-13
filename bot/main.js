@@ -62,23 +62,27 @@ reactions.execute(client);
 // Respond to messages
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
-    if (!msg.content.startsWith(config.prefix) && !msg.content.startsWith(client.user))
-
-    try {
-        return await proxy.execute(client, msg); // Proxy messages first, if applicable
-    } catch (e) { // Catch any errors
-        msg.channel.send(utils.errorEmbed("Encountered an error while trying to proxy that message!")); // Notify the user
-        return utils.stackTrace(client, msg, e); // Then log the stack trace to the console and log channel if configured
+    const mention = new RegExp(`^\s*<@[!&]?${client.user.id}>\s*`);
+    if (!msg.content.startsWith(config.prefix) && !mention.test(msg.content)) {
+        try {
+            return await proxy.execute(client, msg); // Proxy messages first, if applicable
+        } catch (e) { // Catch any errors
+            msg.channel.send(utils.errorEmbed("Encountered an error while trying to proxy that message!")); // Notify the user
+            return utils.stackTrace(client, msg, e); // Then log the stack trace to the console and log channel if configured
+        }
     }
 
     // Then execute any commands the user issued
     let args;
 
     // Detect pings and set args accordingly
-    if (msg.isMentioned(client.user)) {
-        args = msg.content.slice(`<@${client.user.id}> `.length).split(/ +/);
-        if (args[0] == "") args[0] = "help"; // We set the first arg to "help" if there are no args (i.e. a ping on its own)
-    } else args = msg.content.slice(config.prefix.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
+    if (mention.test(msg.content)) {
+        args = msg.content.replace(mention, "").split(/ +/);
+        if (args.length === 1 && args[0] === "") args[0] = "help"; // We set the first arg to "help" if there are no args (i.e. a ping on its own)
+    }
+    else if (msg.content.startsWith(config.prefix))
+        args = msg.content.slice(config.prefix.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
+    else return; // Just do nothing if the message doesn't start with ping or prefix
 
     // Check permissions (if not in DMs)
     if (msg.channel.type === "text" && !await utils.ensurePermissions(client, msg, config.permissions.commands))
@@ -96,7 +100,9 @@ client.on("message", async msg => {
         const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
         // Notify the user if the command was invalid
         if (!command) {
-            const notification = utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`);
+            let notification = `Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`;
+            if (notification.length > 2048) notification = utils.warnEmbed("That's not funny.");
+            else notification = utils.errorEmbed(notification);
 
             if (msg.channel.type === "text") { // In guilds
                 let unknownCommandMsg = true;
