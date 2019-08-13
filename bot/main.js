@@ -129,14 +129,14 @@ client.on("message", async msg => {
 client.login(config.token);
 
 // Graceful exit
-process.on("SIGINT", gracefulExit)
-process.on("SIGTERM", gracefulExit)
+process.on("SIGINT", gracefulExit);
+process.on("SIGTERM", gracefulExit);
 
 
 
 // Set bot user presence status
 async function setPresence() {
-    client.user.setActivity(client.guilds.size <= 1 ? `ks;help` : `ks;help | in ${client.guilds.size} servers`, { type: "PLAYING" });
+    client.user.setActivity(client.guilds.size <= 1 ? `${config.prefix}help` : `${config.prefix}help | in ${client.guilds.size} servers`, { type: "PLAYING" });
 }
 
 // Log out of Discord and exit gracefully
