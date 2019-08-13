@@ -9,6 +9,8 @@ services:
       - bot/main.js
     volumes:
       - "./config.json:/app/config.json:ro"
+    environment:
+      - TZ    # Set your timezone using Olsen naming convention, i.e. TZ=America/New_York
     depends_on:
       - db
     restart: always
