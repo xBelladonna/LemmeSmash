@@ -92,47 +92,47 @@ module.exports = {
             await msg.channel.send(new Discord.RichEmbed()
                 .setColor("#ff2200")
                 .setDescription(`❌ I can't do that because I'm missing the following permissions:\n\`• ${missing.join("\n• ")}\``)).catch(async () => {
-                // Failing that, DM the server owner (if they haven't disabled that)
-                const logChannel = await client.channels.get(config.logChannel) || undefined; // Prepare error log channel
-                await guildSettings.findById(msg.guild.id, async (e, doc) => {
-                    if (e) {
-                        console.error(e);
-                        if (logChannel) logChannel.send(e);
-                        return false;
-                    }
-                    if (doc == null) {
-                        doc = await new guildSettings({
-                            _id: msg.guild.id,
-                            unknownCommandMsg: true,
-                            dmOwner: true
-                        });
-                        await doc.save(e => {
-                            if (e) {
-                                console.error(e);
-                                if (logChannel) logChannel.send(e);
-                            }
-                        });
-                    }
-                    if (doc.dmOwner === true) {
-                        await owner.send(new Discord.RichEmbed()
-                            .setColor("#ff2200")
-                            .setDescription(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``)
-                            .setFooter(`You can enable/disable these notifications by typing \`${config.prefix}set DMOwner\``)).catch(async () => {
-                            // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
-                            const e = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
+                    // Failing that, DM the server owner (if they haven't disabled that)
+                    const logChannel = await client.channels.get(config.logChannel) || undefined; // Prepare error log channel
+                    await guildSettings.findById(msg.guild.id, async (e, doc) => {
+                        if (e) {
+                            console.error(e);
+                            if (logChannel) logChannel.send(e);
+                            return false;
+                        }
+                        if (doc == null) {
+                            doc = await new guildSettings({
+                                _id: msg.guild.id,
+                                unknownCommandMsg: true,
+                                dmOwner: true
+                            });
+                            await doc.save(e => {
+                                if (e) {
+                                    console.error(e);
+                                    if (logChannel) logChannel.send(e);
+                                }
+                            });
+                        }
+                        if (doc.dmOwner === true) {
+                            await owner.send(new Discord.RichEmbed()
+                                .setColor("#ff2200")
+                                .setDescription(`I'm missing the following permissions in **${msg.guild.name}**:\n\`• ${missing.join("\n• ")}\``)
+                                .setFooter(`You can enable/disable these notifications by typing \`${config.prefix}set DMOwner\``)).catch(async () => {
+                                    // Failing *that*, log it as a "stack trace" in the log channel of the instance owner
+                                    const e = new Error("**DiscordPermissionsError:**\n") + new Error(`Unable to notify a server owner of missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
+
+                                    console.log(e);
+                                    if (logChannel) logChannel.send(e);
+                                });
+                        } else {
+                            // After all that, if the server owner has disabled DMing them for permissions errors, log the error in our log channel
+                            const e = new Error("**DiscordPermissionsError:**\n") + new Error(`The server owner has disabled DMing them about missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
 
                             console.log(e);
                             if (logChannel) logChannel.send(e);
-                        });
-                    } else {
-                        // After all that, if the server owner has disabled DMing them for permissions errors, log the error in our log channel
-                        const e = new Error("**DiscordPermissionsError:**\n") + new Error(`The server owner has disabled DMing them about missing permissions!\n\nMissing permissions in **${msg.guild.name}** (${msg.guild.id}):\n\`• ${missing.join("\n• ")}\`\n\nServer owner: ${owner.tag} (${owner.id})`);
-
-                        console.log(e);
-                        if (logChannel) logChannel.send(e);
-                    }
+                        }
+                    });
                 });
-            });
             return false; // We're inside the if block, so return false
         }
         else return true; // If nothing was missing (outside the if block), return true
@@ -140,24 +140,26 @@ module.exports = {
 
     // Traceback logging
     stackTrace: async (client, msg, e) => {
-        console.error(e.stack);
+        const footer = `Sender: ${msg.author.tag} (${msg.author.id}) | ` + (msg.channel.type == "text" ? `Guild: ${msg.guild.id} | Channel: ${msg.channel.id}` : `DM with ${msg.author.tag} (${msg.author.id})`);
+
+        console.error(`\n${new Date().toString()}\nAn error has occurred!\n${footer} | Message: ${msg.content}` + `\n${e.stack}`);
         try {
             if (config.logChannel) {
                 const logChannel = await client.channels.get(config.logChannel);
                 var embed = new Discord.RichEmbed().setColor("#ff2200");
                 if (msg) {
-                    var user = await client.fetchUser(msg.author.id)
                     if (msg.content.length > 256) {
-                        embed.setTitle(msg.content.substring(0, 256 - 3) + "...")
-                    } else embed.setTitle(msg.content)
-                    embed.setFooter(`Sender: ${user.tag} (${user.id}) | Guild: ${msg.guild.id} | Channel: ${msg.channel.id}`)
+                        embed.setTitle(msg.content.substring(0, 256 - 3) + "...");
+                    }
+                    else embed.setTitle(msg.content);
+                    embed.setFooter(footer)
                 }
                 embed.description = "```js\n" + e.stack + "```"
                 logChannel.send(embed);
             }
             return
         } catch (e) {
-            console.warn("Something went wrong and we couldn't log that error to the log channel because of the following error:\n" + e.stack)
+            console.error("Something went wrong and we couldn't log that error to the log channel because of the following error:\n" + e.stack)
         }
     }
 }
