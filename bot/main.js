@@ -28,15 +28,12 @@ const guildSettings = mongoose.model("guildSettings", schemas.guildSettings); //
 const client = new Discord.Client();
 client.commands = new Discord.Collection(); // Create a Collection
 // Set commands in the Collection
-new Promise(resolve => {
-    const files = fs.readdirSync("./bot/commands").filter(file => file.endsWith(".js"));
-    for (const file of files) {
-        const command = require(`./commands/${file}`);
-        // Set the command with the "name" key as the command name and the value as the entire module export
-        client.commands.set(command.name, command)
-    }
-    resolve();
-});
+const files = fs.readdirSync("./bot/commands").filter(file => file.endsWith(".js"));
+for (const file of files) {
+    const command = require(`./commands/${file}`);
+    // Set the command with the "name" key as the command name and the value as the entire module export
+    client.commands.set(command.name, command)
+}
 
 // Respond to various Discord events
 client.on("ready", () => {
