@@ -45,12 +45,12 @@ module.exports = {
                     .addField("Input", `\`\`\`js\n${sanitize(code)}\n\`\`\``)
                     .addField("Response", `\`\`\`js\n${response}\n\`\`\``)
                 );
-            } catch (err) {
-                err = sanitize(err);
+            } catch (e) {
+                e = sanitize(e);
                 msg.channel.send(utils.errorEmbed()
                     .setTitle("Error!")
                     .addField("Input", `\`\`\`js\n${sanitize(code)}\n\`\`\``)
-                    .addField("Response", `\`\`\`x1\n${err}\n\`\`\``)
+                    .addField("Response", `\`\`\`x1\n${e}\n\`\`\``)
                 );
             }
         }

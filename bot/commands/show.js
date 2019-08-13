@@ -5,13 +5,12 @@ const user = mongoose.model("users", schemas.user);
 
 module.exports = {
     name: "show",
-    aliases: ["s", "display", "settings", "set", "member"],
+    aliases: ["s", "display", "user", "profile", "member"],
     description: "Shows your user card with your owo tags and custom character set",
     usage: "",
     example: "",
-    execute: (client, msg, args) => {
-        user.findById(args.length > 0 && args.length < 2 ? args[0] : msg.author.id, async (err, doc) => {
-            if (err) throw err;
+    execute: async (client, msg, args) => {
+        await user.findById(args.length > 0 && args.length < 2 ? args[0] : msg.author.id).then(async doc => {
             if (doc == null) return msg.channel.send(utils.errorEmbed(`${args.length > 0 && args.length < 2 ? "That user has" : "You have"} not set any tags or a custom character set. Type \`ks;help\` to get started!`));
 
             let tagsKeysmash = "";

@@ -14,11 +14,10 @@ module.exports = {
         "DMOwner**\nToggles DMing the server owner about missing permissions on or off (not case-sensitive)"
     ],
     example: "",
-    execute: (client, msg, args) => {
+    execute: async (client, msg, args) => {
         if (msg.channel.type !== "text")
             return msg.channel.send(utils.errorEmbed("This command only works in servers!"));
-        guildSettings.findById(msg.guild.id, async (err, doc) => {
-            if (err) throw err;
+        await guildSettings.findById(msg.guild.id).then(async doc => {
             if (doc == null) {
                 doc = await new guildSettings({
                     _id: msg.guild.id,
@@ -44,8 +43,8 @@ module.exports = {
 async function displaySettings(doc, msg, args) {
     let embed = utils.successEmbed()
         .setAuthor(`Settings for ${msg.guild.name}`, msg.guild.iconURL)
-        .addField("Unknown command errors:", `${doc.unknownCommandMsg === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type ${config.prefix}set UnknownCommand (not case-sensitive)`)
-        .addField("DM owner about missing permissions:" ,`${doc.dmOwner === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type ${config.prefix}set DMOwner (not case-sensitive)`);
+        .addField("Unknown command errors:", `${doc.unknownCommandMsg === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type \`${config.prefix}set UnknownCommand\``)
+        .addField("DM owner about missing permissions:" ,`${doc.dmOwner === true ? "**Enabled**" : "**Disabled**"}\nHint: to toggle between enabled and disabled, type \`${config.prefix}set DMOwner\``);
     return msg.channel.send(embed);
 }
 
@@ -61,10 +60,7 @@ async function toggleCommandError(doc, msg, args) {
         response = `Enabled unknown command messages in **${msg.guild.name}**`;
     }
 
-    return await doc.save(err => {
-        if (err) throw err;
-        return msg.channel.send(utils.successEmbed(response));
-    });
+    return await doc.save(await msg.channel.send(utils.successEmbed(response)));
 }
 
 async function toggleDMOwner(doc, msg, args) {
@@ -78,8 +74,5 @@ async function toggleDMOwner(doc, msg, args) {
         response = `Enabled DMing the owner of **${msg.guild.name}** (${await msg.client.fetchUser(msg.guild.ownerID)}) about missing permissions`;
     }
 
-    return await doc.save(err => {
-        if (err) throw err;
-        return msg.channel.send(utils.successEmbed(response));
-    });
+    return await doc.save(await msg.channel.send(utils.successEmbed(response)));
 }

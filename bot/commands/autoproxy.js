@@ -12,11 +12,10 @@ module.exports = {
         "**\nToggles between enabled and disabled states (per-server)"
     ],
     example: "",
-    execute: (client, msg, args) => {
+    execute: async (client, msg, args) => {
         if (msg.channel.type !== "text")
             return msg.channel.send(utils.errorEmbed("This command only works in servers!"));
-        user.findById(msg.author.id, async (err, doc) => {
-            if (err) throw err;
+        await user.findById(msg.author.id).then(async doc => {
             if (doc == null) {
                 let newUser = await new user({
                     _id: msg.author.id,
@@ -24,14 +23,14 @@ module.exports = {
                 });
                 doc = newUser;
             }
-            return toggleState(doc, msg, args);
+            return toggleState(doc, msg);
         });
     }
 }
 
 
 // Toggle autoproxy state
-async function toggleState(user, msg, args) {
+async function toggleState(user, msg) {
     let response;
 
     if (!user.autoproxy.includes(msg.guild.id)) {
@@ -42,8 +41,5 @@ async function toggleState(user, msg, args) {
         response = `Disabled autoproxying to owospeak in **${msg.guild.name}**`;
     }
 
-    return await user.save(err => {
-        if (err) throw err;
-        return msg.channel.send(utils.successEmbed(response));
-    });
+    return await user.save(await msg.channel.send(utils.successEmbed(response)));
 }

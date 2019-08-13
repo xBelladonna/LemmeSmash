@@ -16,17 +16,19 @@ module.exports = {
         if (msg.author.id == config.owner) {
             if (new RegExp("[0-9]+", "g").test(channel)) {
                 // Useful for notifying users about edge-case errors and anything else
-                if (channel.length !== 18) return msg.channel.send("That's not a valid Discord Snowflake!");
+                if (channel.length !== 18) return msg.channel.send(utils.errorEmbed("That's not a valid Discord Snowflake!"));
+                if (args.length < 2) return msg.channel.send(utils.errorEmbed("Cannot send an empty message!"));
                 args.shift();
                 const message = args.join(" ");
                 try {
                     await client.channels.get(channel).send(message);
                     return msg.channel.send("Message sent successfully!");
-                } catch (err) {
-                    console.error(`Unable to send message to ${channel} due to lack of permissions:\n${err}`)
-                    return msg.channel.send("I don't have access to that channel!");
+                } catch (e) {
+                    console.error(`\nUnable to send message to channel ID ${channel} due to lack of permissions:\n${e}`)
+                    return msg.channel.send(utils.errorEmbed("I don't have access to that channel!"));
                 }
             }
+            if (args.length < 1) return msg.channel.send(utils.errorEmbed("Cannot send an empty message!"));
             const message = args.join(" ");
             await msg.channel.send(message);
             return msg.delete();

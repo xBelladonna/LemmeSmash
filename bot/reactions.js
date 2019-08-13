@@ -10,17 +10,24 @@ const events = {
 
 module.exports.execute = async client => {
     client.on("messageReactionAdd", async (react, user) => {
-        switch (react.emoji.name) {
-            case "❓":
-            case "❔":
-                return queryMessage(react, user, client);
+        try {
+            switch (react.emoji.name) {
+                case "❓":
+                case "❔":
+                    await queryMessage(react, user, client);
+                    break;
 
-            case "❌":
-                return deleteMessage(react, user, client);
+                case "❌":
+                    await deleteMessage(react, user);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
+        } catch (e) {
+            react.message.channel.send(utils.errorEmbed("Encountered an error while trying to handle that reaction!")); // Notify the user
+            return utils.stackTrace(client, null, e); // Then log the stack trace to the log channel if configured
+        }
     });
 
     // React to uncached messages using the raw gateway event payload
@@ -39,14 +46,10 @@ module.exports.execute = async client => {
 }
 
 async function queryMessage(react, user, client) {
-    message.findById(react.message.id, async (err, doc) => {
-        if (err) { // Handle errors
-            console.warn(err);
-            utils.stackTrace(client, null, err);
-            return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"));
-        }
+    await message.findById(react.message.id).then(async doc => {
         if (doc == null) return; // If the message wasn't a proxied message, do nothing
         react.remove(user.id); // Remove the reaction ASAP
+
         const owner = await client.fetchUser(doc.owner);
         let response = utils.successEmbed()
             .setAuthor(owner.tag, owner.avatarURL)
@@ -57,33 +60,22 @@ async function queryMessage(react, user, client) {
 
         try {
             await user.send(response);
-        } catch (err) {
-            const msg = await react.message.channel
-                .send(`I can't DM you ${user} ${keysmash.ISOStandard("sdfghjb")}`);
-            await utils.sleep(10 * 1000);
-            msg.delete();
-            const logMsg = `Unable to DM ${user.tag} a message card due to the following error:\n${err.stack}`;
-            console.error(logMsg);
+        } catch (e) {
+            if (e.code === 50007) {
+                const msg = await react.message.channel
+                    .send(`I can't DM you ${user}, please check your privacy settings ${keysmash.ISOStandard("sdfghjb")}`);
+                await utils.sleep(10 * 1000);
+                msg.delete();
+            }
+            else throw e;
         }
-    })
+    });
 }
 
-function deleteMessage(react, user, client) {
-    message.findById(react.message.id, async (err, doc) => {
-        if (err) {
-            console.warn(err);
-            utils.stackTrace(client, null, err);
-            return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"));
-        }
-        if (doc == null) return;
-        if (user.id != doc.owner) return;
-        message.findByIdAndDelete(doc._id, err => {
-            if (err) {
-                console.warn(err);
-                utils.stackTrace(client, null, err);
-                return react.message.channel.send(utils.errorEmbed("Something went wrong with that reaction"));
-            }
-            return react.message.delete();
-        })
-    })
+async function deleteMessage(react, user) {
+    await message.findById(react.message.id).then(async doc => {
+        if (doc == null || user.id != doc.owner) return;
+
+        await message.findByIdAndDelete(doc._id).then(await react.message.delete());
+    });
 }

@@ -10,8 +10,7 @@ module.exports.execute = async (client, msg) => {
     if (msg.channel.type !== "text")
         return msg.channel.send(`I can't proxy in DMs because webhooks don't exist in them ${keysmash.ISOStandard("sdfghjvb")}`);
 
-    await user.findById(msg.author.id, async (err, doc) => { // Get the user document from the db
-        if (err) throw err;
+    await user.findById(msg.author.id).then(async doc => { // Get the user document from the db
         if (doc == null) return; // If not found, do nothing
 
         let content;
@@ -31,34 +30,34 @@ module.exports.execute = async (client, msg) => {
         if (content.length > 2000) return msg.channel.send(utils.errorEmbed("All good things in moderation..."));
 
         const hook = await utils.getWebhook(client, msg.channel); // Get the webhook (or create one if it doesn't exist)
+        if (hook instanceof Error) throw hook;
 
         // Construct webhook payload options
         const options = {
             username: msg.member.displayName || msg.author.username, // Set the name to either a server nickname or a username
             avatarURL: msg.author.avatarURL, // Get the URL of the user's avatar
-            files: utils.attach(msg.attachments), // Convert message attachments to an array of file objects
+            files: await utils.attach(msg.attachments), // Convert message attachments to an array of file objects
             disableEveryone: true
         };
-        // Send the complete webhook payload
-        const sentMessage = await hook.send(content, options);
-
-        // Record the resulting message's details in the db
-        new message({
-            _id: sentMessage.id,
-            owner: msg.member.id,
-        }).save();
 
         try {
+
+            // Send the complete webhook payload
+            const sentMessage = await hook.send(content, options);
+
+            // Record the resulting message's details in the db
+            await new message({
+                _id: sentMessage.id,
+                owner: msg.member.id,
+            }).save();
+
             await utils.sleep(250); // Wait 0.25 seconds to prevent stuck messages
             await msg.delete(); // Finally, delete the original message
-        } catch (err) {
+        } catch (e) {
             // Sometimes something deletes the message before we get to it. Bit of an edge case but it happens sometimes, in which case it's not a problem anyway, bail
-            if (err.name === "DiscordAPIError" && err.message === "Unknown Message") return;
-            // Otherwise, log the error
-            else {
-                console.error(`\n${new Date().toString()}\nUnable to delete a message due to the following error:\n${err}`);
-                utils.stackTrace(client, msg, err);
-            }
+            if (e.code === 10008) return;
+            // Otherwise just throw
+            else throw e;
         }
     });
 }

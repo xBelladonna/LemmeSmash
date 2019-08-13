@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const config = require("../config.json");
 const utils = require("./utils.js");
+const reactions = require('./reactions.js');
 const fs = require("fs");
 const proxy = require("./proxy.js")
 const mongoose = require("mongoose");
@@ -59,14 +60,20 @@ client.on("guildDelete", () => {
 });
 
 // Handle reaction events
-const reactions = require('./reactions.js');
 reactions.execute(client);
 
 // Respond to messages
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
     if (!msg.content.startsWith(config.prefix) && !msg.content.startsWith(client.user))
-        return proxy.execute(client, msg); // Proxy messages first, if applicable
+
+    try {
+        return await proxy.execute(client, msg); // Proxy messages first, if applicable
+    } catch (e) { // Catch any errors
+        msg.channel.send(utils.errorEmbed("Encountered an error while trying to proxy that message!")); // Notify the user
+        return utils.stackTrace(client, msg, e); // Then log the stack trace to the console and log channel if configured
+    }
+
     // Then execute any commands the user issued
     let args;
 
@@ -81,44 +88,39 @@ client.on("message", async msg => {
         return;
 
     // Parse commands and arguments
-    let commandName = args.shift();
-    if (!commandName) commandName = args.shift();
+    let commandName;
+    do {
+        commandName = args.shift();
+    } while (!commandName && args.length > 0);
     if (!commandName) return;
     commandName = commandName.toLowerCase();
 
-    const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
-    // Notify the user if the command was invalid
-    await new Promise(async resolve => {
-        if (msg.channel.type === "text") { // In guilds
-            let unknownCommandMsg;
-            await guildSettings.findById(msg.guild.id, async (err, doc) => { // Get guild settings
-                if (err) { // Handle errors
-                    console.error(err);
-                    utils.stackTrace(client, msg, err);
-                }
-                if (doc == null || doc.unknownCommandMsg === true) unknownCommandMsg = true;
-                else if (doc.unknownCommandMsg === false) unknownCommandMsg = false;
-            });
-            if (!command && unknownCommandMsg === true)
-                return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`));
-            else if (!command && unknownCommandMsg === false) return;
-        }
-        else if (msg.channel.type !== "text") {
-            if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`));
-        }
-        resolve();
-    });
-
-    // Execute command if it exists
-    if (!command) return;
     try {
+        const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
+        // Notify the user if the command was invalid
+        if (!command) {
+            const notification = utils.errorEmbed(`Unknown command \`${commandName}\`. For a list of commands, type \`${config.prefix}help\`, or just ping me!`);
+
+            if (msg.channel.type === "text") { // In guilds
+                let unknownCommandMsg = true;
+
+                await guildSettings.findById(msg.guild.id).then(doc => { // Get guild settings
+                    if (doc != null && doc.unknownCommandMsg === false) unknownCommandMsg = false;
+                });
+
+                if (unknownCommandMsg === true) return msg.channel.send(notification);
+            }
+            else if (msg.channel.type !== "text") return msg.channel.send(notification);
+        }
+
+        // Execute command if it exists
         await command.execute(client, msg, args);
-    } catch (err) { // Catch any errors
-        console.error(err.stack); // Log error to console
+    } catch (e) {
         msg.channel.send(utils.errorEmbed("Encountered an error while trying to execute that command!")); // Notify the user
-        utils.stackTrace(client, msg, err); // Then log the stack trace to the log channel if configured
+        utils.stackTrace(client, msg, e); // Then log the stack trace to the console and log channel if configured
     }
 });
+
 
 // Finally, login with the configured token
 client.login(config.token);

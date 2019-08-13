@@ -14,9 +14,8 @@ module.exports = {
         "owo <prefix>text<suffix>**\nSets your owospeak tag(s). Same as above."
     ],
     example: "#!text",
-    execute: (client, msg, args) => {
-        user.findById(msg.author.id, async (err, doc) => {
-            if (err) throw err;
+    execute: async (client, msg, args) => {
+        await user.findById(msg.author.id).then(async doc => {
             if (doc == null) {
                 let newUser = await new user({
                     _id: msg.author.id,
@@ -94,8 +93,5 @@ async function setTags(user, msg, type, args) {
     if (type === "keysmash") user.keysmash = tags;
     else if (type === "owospeak") user.owo = tags;
 
-    return await user.save(err => {
-        if (err) throw err;
-        return msg.channel.send(utils.successEmbed(response));
-    });
+    return await user.save(await msg.channel.send(utils.successEmbed(response)));
 }

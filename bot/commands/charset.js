@@ -12,9 +12,8 @@ module.exports = {
         "<characters>**\nSets your custom character set to the characters you specify"
     ],
     example: "asdfcvbn",
-    execute: (client, msg, args) => {
-        user.findById(msg.author.id, async (err, doc) => {
-            if (err) throw err;
+    execute: async (client, msg, args) => {
+        await user.findById(msg.author.id).then(async doc => {
             if (doc == null) {
                 let newUser = await new user({
                     _id: msg.author.id,
@@ -42,8 +41,5 @@ async function setCustomChars(user, msg, args) {
     }
 
     user.charset = charset;
-    return await user.save(err => {
-        if (err) throw err;
-        return msg.channel.send(utils.successEmbed(response));
-    });
+    return await user.save(await msg.channel.send(utils.successEmbed(response)));
 }
