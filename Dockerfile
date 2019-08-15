@@ -2,8 +2,6 @@ FROM node:alpine
 
 WORKDIR /app
 
-ADD package.json /app
-ADD package-lock.json /app
-ADD bot /app/bot
+ADD . /app
 
 RUN npm install && npm install -g pm2
