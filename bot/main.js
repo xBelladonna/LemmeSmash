@@ -64,10 +64,14 @@ reactions.execute(client);
 client.on("message", async msg => {
     if (msg.author.bot) return; // Ignore messages from other bots
     const mention = new RegExp(`^\s*<@[!&]?${client.user.id}>\s*`);
-    let match;
-    await config.prefix.forEach(prefix => {
-        prefix = prefix.toLowerCase();
-        if (msg.content.toLowerCase().startsWith(prefix)) match = prefix;
+    // Get prefix "synchronously" inside an async function by waiting for a Promise
+    const match = await new Promise(resolve => {
+        for (let prefix of config.prefix) {
+            prefix = prefix.toLowerCase();
+            // If a prefix is found, resolve with that value
+            if (msg.content.toLowerCase().startsWith(prefix)) resolve(prefix);
+        }
+        resolve(); // Otherwise just resolve with nothing, i.e. undefined
     });
 
     if (!msg.content.toLowerCase().startsWith(match) && !mention.test(msg.content)) {

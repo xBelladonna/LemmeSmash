@@ -29,7 +29,7 @@ module.exports = {
             if (args.length === 0) return displaySettings(doc, msg, args); // If no arguments, just display the guild's settings, no need to check perms
             if (!msg.member.hasPermission("MANAGE_MESSAGES")) return; // If not correct permissions, bail
 
-            switch (args[0].toLowerCase()) {
+            switch (args[0]) {
                 case "UnknownCommand".toLowerCase():
                     return toggleCommandError(doc, msg, args);
 
