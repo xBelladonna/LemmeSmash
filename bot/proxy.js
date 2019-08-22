@@ -22,7 +22,7 @@ module.exports.execute = async (client, msg) => {
             if (content != null) msg.content = content;
             msg.content = await msg.content.slice(doc.owo.prefix.length, -doc.owo.suffix.length == 0 ? msg.content.length : -doc.owo.suffix.length).trim();
             content = await owoify(msg.content);
-        }
+        };
 
         if (!content) return;
         // Ensure permissions and abort if missing
@@ -33,11 +33,8 @@ module.exports.execute = async (client, msg) => {
         if (hook instanceof Error) throw hook;
 
         // Construct webhook payload options
-        const username = msg.member.displayName.length >= 2 ? msg.member.displayName : `${msg.member.displayName} (${msg.author.username})`;
-        if (username.length < 2) return msg.channel.send(utils.warnEmbed("Username/nickname must be at least 2 characters long for that to work"));
-
         const options = {
-            username: username, // Set the name to either a server nickname (if exists) or a username
+            username: utils.truncateOrPadUsername(msg.member.displayName), // Set the name to either a server nickname (if exists) or a username
             avatarURL: msg.author.avatarURL, // Get the URL of the user's avatar
             files: await utils.attach(msg.attachments), // Convert message attachments to an array of file objects
             disableEveryone: true
@@ -60,9 +57,9 @@ module.exports.execute = async (client, msg) => {
             if (e.code === 10008) return;
             // Otherwise just throw
             else throw e;
-        }
+        };
     });
-}
+};
 
 
 function matchTags(doc, msg) {
@@ -73,7 +70,7 @@ function matchTags(doc, msg) {
     else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
         return true;
     else return false;
-}
+};
 
 async function replaceByKeysmash(doc, msg) {
     // Match for prefixes, suffixes, or both, and get the charset if specified with the tag(s)
@@ -109,14 +106,14 @@ async function replaceByKeysmash(doc, msg) {
     }
 
     return content.join(" ");
-}
+};
 
 async function owoify(content) {
     if (!content) return;
     return await content.split(" ")
-        .map(x => x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w"))
-        .map(x => x.replace(new RegExp("^the\\b", "ig"), x => x === x.toUpperCase() ? "DA" : "da"))
-        .map(x => x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d"))
-        .map(x => x.replace(new RegExp("[ts]ion", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun"))
+        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w") : x)
+        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("^the\\b", "ig"), x => x === x.toUpperCase() ? "DA" : "da") : x)
+        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d") : x)
+        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("[ts]ion", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun") : x)
         .join(" ");
-}
+};

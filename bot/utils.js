@@ -72,6 +72,20 @@ module.exports = {
         if (string == null) throw new TypeError("Empty input to escapeCharacters function!");
         return string.replace(/[.*_~`(> )-^$+?\/|()[\]{}\\]/gm, '\\$&'); // $& means the whole matched string
     },
+
+    // Returns true if the input string is a URL and false if not
+    validateUrl(url) {
+        pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/igm);
+        return pattern.test(url);
+    },
+
+    // Adds an invisible char if input string is < 2 chars or truncates if > 80 chars
+    truncateOrPadUsername(string) {
+        string = string.padEnd(2, "\u17b5"); // Invisible unicode char U+17B5
+        if (string.length > 80) return string.slice(0, 79) + "…"; // Truncate ending with single Unicode char U+2026
+        return string;
+    },
+
     // Async function that waits for the given number of ms
     sleep: time => {
         return new Promise(resolve => {
