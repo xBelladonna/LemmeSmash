@@ -23,6 +23,43 @@ module.exports = {
 
         if (msg.author.id == config.owner) {
             if (args.length === 0) return utils.errorEmbed(msg.channel.send("You need to provide code to evaluate!"));
+            if (args[0] === "restart") {
+                const notification = "Logging out of Discord and re-establishing the connection...";
+                await msg.channel.send(utils.warnEmbed(notification));
+                console.warn("\nRestart command issued! " + notification);
+                await client.destroy();
+                await client.login(config.token);
+                return msg.channel.send(utils.successEmbed("Successfully logged back into Discord!"));
+            }
+            if (args[0] === "kill") {
+                console.warn("\nWARNING: Kill request initiated!");
+                const prompt = await msg.channel.send(utils.warnEmbed().addField("**WARNING!**", "This will kill the running process and it **will not** restart!\nDo you wish to continue?")
+                    .setFooter("NOTE: The process will restart if you're running it under PM2 as is in the Docker setup"));
+                await prompt.react("✅"); await prompt.react("❌");
+                const filter = (reaction, user) => {
+                    return ["✅", "❌"].includes(reaction.emoji.name) && user.id === config.owner;
+                };
+                return await prompt.awaitReactions(filter, {
+                    max: 1,
+                    time: 1000 * 60,
+                    errors: ["time"]
+                }).then(async collection => {
+                    const reaction = collection.first();
+                    switch (reaction.emoji.name) {
+                        case "✅":
+                            await msg.channel.send(utils.successEmbed()
+                                .addField("**Killing process!**", "If you wish to start the bot again, you will have to do so manually")
+                                .setFooter("NOTE: If you're running the bot under PM2 as is in the Docker setup, expect the bot to restart automatically"));
+                            return await utils.gracefulExit(client);
+                        case "❌":
+                            console.log("NOTICE: Kill request cancelled.");
+                            return msg.channel.send(utils.errorEmbed("Operation cancelled. Stay safe!"));
+                    }
+                }).catch(async e => {
+                    await prompt.clearReactions();
+                    return msg.channel.send(utils.errorEmbed("Operation timed out! Try being faster."));
+                });
+            }
 
             const code = args.join(" ");
 

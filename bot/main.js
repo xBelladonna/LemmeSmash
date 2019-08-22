@@ -40,7 +40,7 @@ for (const file of files) {
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag} (ID: ${client.user.id})`);
     console.log(`Connected to ${client.channels.size} ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
-    setPresence();
+    utils.setPresence(client);
 });
 
 client.on("warn", info => console.warn(`\n${new Date().toString()}\n${info}`));
@@ -49,11 +49,11 @@ client.on("reconnecting", () =>
 client.on("resume", () => console.log(`\n${new Date().toString()}\nSuccessfully resumed websocket connection!`));
 
 client.on("guildCreate", () => {
-    setPresence();
+    utils.setPresence(client);
     console.log(`\n${new Date().toString()}\n${client.user.tag} has been added to a guild!\nNow connected to ${client.channels.size} ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
 });
 client.on("guildDelete", () => {
-    setPresence();
+    utils.setPresence(client);
     console.log(`\n${new Date().toString()}\n${client.user.tag} has been removed from a guild :(\nNow connected to ${client.channels.size} ` + `${client.channels.size == 1 ? "channel" : "channels"}` + ` in ${client.guilds.size} ` + `${client.guilds.size == 1 ? "server" : "servers"}`);
 });
 
@@ -140,20 +140,5 @@ client.on("message", async msg => {
 client.login(config.token);
 
 // Graceful exit
-process.on("SIGINT", gracefulExit);
-process.on("SIGTERM", gracefulExit);
-
-
-
-// Set bot user presence status
-async function setPresence() {
-    client.user.setActivity(client.guilds.size <= 1 ? `${defaultPrefix}help` : `${defaultPrefix}help | in ${client.guilds.size} servers`, { type: "PLAYING" });
-}
-
-// Log out of Discord and exit gracefully
-function gracefulExit() {
-    console.warn("\nGracefully shutting down...");
-    client.destroy();
-    console.warn("Goodbye!\n");
-    process.exit();
-}
+process.on("SIGINT", () => utils.gracefulExit(client));
+process.on("SIGTERM", () => utils.gracefulExit(client));

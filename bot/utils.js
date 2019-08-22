@@ -23,6 +23,19 @@ module.exports = {
             .setDescription(content || "");
     },
 
+    setPresence: client => {
+        client.user.setActivity(client.guilds.size <= 1 ? `${defaultPrefix}help` : `${defaultPrefix}help | in ${client.guilds.size} servers`, { type: "PLAYING" });
+    },
+
+    gracefulExit: async client => {
+        await new Promise(async resolve => {
+            console.warn("\nGracefully shutting down...");
+            await client.destroy();
+            resolve(console.warn("Goodbye!\n"));
+        });
+        process.exit();
+    },
+
     // Webhook getter
     getWebhook: async (client, channel) => {
         let hook;
