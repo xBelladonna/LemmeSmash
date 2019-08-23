@@ -8,10 +8,10 @@ module.exports = {
     aliases: ["c", "char", "chars", "characters", "letters"],
     description: "Sets a custom character set to generate keysmashes from",
     usage: [
-        "**\nClears your custom character set",
-        "<characters>**\nSets your custom character set to the characters you specify"
+        "\nClears your custom character set",
+        "**<characters>**\nSets your custom character set to the characters you specify"
     ],
-    example: "asdfcvbn",
+    examples: ["asdfcvbn"],
     execute: async (client, msg, args) => {
         await user.findById(msg.author.id).then(async doc => {
             if (doc == null) {

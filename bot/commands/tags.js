@@ -10,11 +10,14 @@ module.exports = {
     aliases: ["t", "tag", "p", "proxy"],
     description: "Sets your keysmash tag(s), or your owospeak tag(s)",
     usage: [
-        "**\nClears your keysmash tags",
-        "<prefix>text<suffix>**\nSets your keysmash tag(s). Only either a prefix or suffix is required, not both. Example match must contain the string `text`",
-        "owo <prefix>text<suffix>**\nSets your owospeak tag(s). Same as above."
+        "\nClears your keysmash tags",
+        "**<prefix>text<suffix>**\nSets your keysmash tag(s). Only either a prefix or suffix is required, not both. Example match must contain the string `text`",
+        "**owo <prefix>text<suffix>**\nSets your owospeak tag(s). Same as above."
     ],
-    example: "#!text",
+    examples: [
+        "#!text",
+        "owo $text"
+    ],
     execute: async (client, msg, args) => {
         await user.findById(msg.author.id).then(async doc => {
             if (doc == null) {

@@ -9,9 +9,9 @@ module.exports = {
     aliases: ["a", "auto", "autowo"],
     description: "Enables automatic proxying to owospeak without using tags",
     usage: [
-        "**\nToggles between enabled and disabled states (per-server)"
+        "\nToggles between enabled and disabled states (per-server)"
     ],
-    example: "",
+    examples: null,
     execute: async (client, msg, args) => {
         if (msg.channel.type !== "text")
             return msg.channel.send(utils.errorEmbed("This command only works in servers!"));

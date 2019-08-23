@@ -10,11 +10,11 @@ module.exports = {
     aliases: ["setting", "settings"],
     description: "Changes various settings for the server, if you have the Manage Messages permission",
     usage: [
-        "**\nDisplays the current server's settings",
-        "UnknownCommand**\nToggles the unknown command message on or off (command is not case-sensitive)",
-        "DMOwner**\nToggles DMing the server owner about missing permissions on or off (not case-sensitive)"
+        "\nDisplays the current server's settings",
+        "**UnknownCommand**\nToggles the unknown command message on or off (command is not case-sensitive)",
+        "**DMOwner**\nToggles DMing the server owner about missing permissions on or off (not case-sensitive)"
     ],
-    example: "",
+    examples: null,
     execute: async (client, msg, args) => {
         if (msg.channel.type !== "text")
             return msg.channel.send(utils.errorEmbed("This command only works in servers!"));

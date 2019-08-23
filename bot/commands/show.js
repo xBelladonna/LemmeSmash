@@ -6,9 +6,15 @@ const user = mongoose.model("users", schemas.user);
 module.exports = {
     name: "show",
     aliases: ["s", "display", "user", "profile", "member"],
-    description: "Shows your user card with your owo tags and custom character set",
-    usage: "",
-    example: "",
+    description: "Shows your user card with your owo tags and custom character set, or of another user's if you pass their user ID",
+    usage: [
+        "",
+        "**<user ID>**"
+    ],
+    examples: [
+        "",
+        "075795705503915751"
+    ],
     execute: async (client, msg, args) => {
         await user.findById(args.length > 0 && args.length < 2 ? args[0] : msg.author.id).then(async doc => {
             if (doc == null) return msg.channel.send(utils.errorEmbed(`${args.length > 0 && args.length < 2 ? "That user has" : "You have"} not set any tags or a custom character set. Type \`ks;help\` to get started!`));

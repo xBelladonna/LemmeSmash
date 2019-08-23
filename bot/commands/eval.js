@@ -7,11 +7,11 @@ module.exports = {
     description: "Executes raw JavaScript code. **Be extremely careful with this!**",
     hidden: true,
     usage: [
-        "<JavaScript code here>**\nExecutes the message as is, and throws any errors/responses into the channel",
-        "restart | reboot**\nLogs out of Discord and reconnects to the gateway, effectively restarting the bot",
-        "shutdown | kill | exit**\nShuts down the bot and gracefully exits. The bot will not restart after this command is issued"
+        "**<JavaScript code here>**\nExecutes the message as is, and throws any errors/responses into the channel",
+        "**restart | reboot**\nLogs out of Discord and reconnects to the gateway, effectively restarting the bot",
+        "**shutdown | kill | exit**\nShuts down the bot and gracefully exits. The bot will not restart after this command is issued"
     ],
-    example: [
+    examples: [
         "msg.channel.send(\"Hello World!\");",
         "restart",
         "reboot",

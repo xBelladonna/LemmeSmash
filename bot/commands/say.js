@@ -6,8 +6,14 @@ module.exports = {
     aliases: ["tell"],
     description: "Owner only fun times",
     hidden: true,
-    usage: [],
-    example: [],
+    usage: [
+        "**<your message here>**\nThe bot will post the message you wrote",
+        "**<channel ID> <your message here>**\n The bot will send the message you wrote to the channel with the ID you specified"
+    ],
+    examples: [
+        "Hello World!",
+        "549997949714152251 Hello mortals"
+    ],
     execute: async (client, msg, args) => {
         const channel = args[0];
 
