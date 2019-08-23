@@ -59,7 +59,7 @@ module.exports = {
         const name = args[0].toLowerCase();
         const command = commands.get(name) || commands.find(command => command.aliases && command.aliases.includes(name));
 
-        if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${name}\`. For a list of commands, type \`${defaultPrefix} help\`, or just ping me!`));
+        if (!command) return msg.channel.send(utils.errorEmbed(`Unknown command \`${name}\`. For a list of commands, type \`${defaultPrefix}help\`, or just ping me!`));
 
         data.push(`**Name:** ${command.name}`);
 

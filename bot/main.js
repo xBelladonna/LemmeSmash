@@ -69,7 +69,7 @@ client.on("message", async msg => {
         for (let prefix of config.prefix) {
             prefix = prefix.toLowerCase();
             // If a prefix is found, resolve with that value
-            if (msg.content.toLowerCase().startsWith(prefix)) resolve(prefix);
+            if (msg.content.toLowerCase().startsWith(prefix)) return resolve(prefix);
         }
         resolve(); // Otherwise just resolve with nothing, i.e. undefined
     });
@@ -99,16 +99,28 @@ client.on("message", async msg => {
     if (msg.channel.type === "text" && !await utils.ensurePermissions(client, msg, config.permissions.commands))
         return;
 
-    // Parse commands and arguments
-    let commandName;
-    do {
-        commandName = args.shift();
-    } while (!commandName && args.length > 0);
-    if (!commandName) return;
-    commandName = commandName.toLowerCase();
-
+    // Handle commands
     try {
-        const command = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
+        let commandName;
+        let command;
+
+        // Parse commands and arguments
+        await new Promise(async (resolve, reject) => {
+            let i = 0;
+            let candidate;
+
+            for (let commandName of args) {
+                commandName = commandName.toLowerCase();
+                candidate = await client.commands.get(commandName) || await client.commands.find(command => command.aliases && command.aliases.includes(commandName));
+                i++;
+                if (candidate) break;
+            }
+
+            if (!candidate) return reject(args.join(" "));
+            args = args.slice(i);
+            resolve(command = candidate);
+        }).catch(unknownCommand => commandName = unknownCommand);
+
         // Notify the user if the command was invalid
         if (!command) {
             let notification = `Unknown command \`${commandName}\`. For a list of commands, type \`${defaultPrefix}help\`, or just ping me!`;

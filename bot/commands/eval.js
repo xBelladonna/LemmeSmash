@@ -25,8 +25,8 @@ module.exports = {
         ** This means that, since node.js has access to your computer's hard drive, this
         ** command can be used to do anything that someone with physical access to your
         ** computer can do. You can accidentally wipe entire hard drives with this, and
-        ** I ("the creator") am not responsible for anything that may go wrong from accidental
-        ** or intentional misuse of this command.
+        ** I ("the creator") am not responsible nor may I be held liable for anything
+        ** that may go wrong from accidental or intentional misuse of this command.
         **
         ** With that said, this command is meant strictly for debugging problems without suffering downtime.
         ** Use it wisely and DO NOT do anything that would break the Discord Terms of Service.
