@@ -176,7 +176,7 @@ module.exports = {
                 var embed = new Discord.RichEmbed().setColor("#ff2200");
                 if (msg) {
                     if (msg.content.length > 256) {
-                        embed.setTitle(msg.content.substring(0, 256 - 3) + "...");
+                        embed.setTitle(msg.content.substring(0, 256 - 1) + "…");
                     }
                     else embed.setTitle(msg.content);
                     embed.setFooter(footer)
