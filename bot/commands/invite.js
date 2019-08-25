@@ -3,7 +3,7 @@ const utils = require("../utils.js");
 
 module.exports = {
     name: "invite",
-    aliases: ["i", "add", "link"],
+    aliases: ["add", "link"],
     description: "Generates an invite link for this bot's specific account",
     usage: [""],
     examples: null,
