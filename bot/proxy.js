@@ -14,6 +14,7 @@ module.exports.execute = async (client, msg) => {
         if (doc == null) return; // If not found, do nothing
 
         let content;
+        // If we get 1 or more matches for keysmash tags, replace the tags with generated keysmashes
         if (matchTags(doc, msg) === true) content = await replaceByKeysmash(doc, msg.content);
 
         if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(content != null ? content : msg.content);
@@ -65,11 +66,11 @@ module.exports.execute = async (client, msg) => {
 function matchTags(doc, msg) {
     if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
         return true;
-    else if ((doc.keysmash.prefix == "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.suffix))
+    if ((doc.keysmash.prefix == "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.suffix))
         return true;
-    else if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
+    if ((doc.keysmash.prefix != "" && doc.keysmash.suffix != "") && msg.content.includes(doc.keysmash.prefix && doc.keysmash.suffix))
         return true;
-    else return false;
+    return false;
 };
 
 async function replaceByKeysmash(doc, msg) {
@@ -79,21 +80,21 @@ async function replaceByKeysmash(doc, msg) {
     let content = msg.split(" ");
     let charset = [];
     if (doc.keysmash.prefix != null && doc.keysmash.suffix == null) { // If there's a prefix but no suffix
-        pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}([^\\s]*)`, "g"); // Match for tags and prefixed charsets
+        pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}.*`, "g"); // Match for tags and prefixed charsets
         for (let i = 0; i < content.length; i++) { // Iterate over, creating an array of tags to replace
             match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
-            charset.push(match[i].length > doc.keysmash.prefix.length ? match[i].slice(doc.keysmash.prefix.length, match[i].length) : "");
+            charset.push(match[i].length > doc.keysmash.prefix.length ? match[i].slice(doc.keysmash.prefix.length) : "");
         }
     }
     else if (doc.keysmash.prefix == null && doc.keysmash.suffix != null) { // Match for suffixes only, the rest is the same as above
-        pattern = new RegExp(`([^\\s]*)${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
+        pattern = new RegExp(`.*${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
         for (let i = 0; i < content.length; i++) {
             match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.suffix.length ? match[i].slice(0, match[i].length - doc.keysmash.suffix.length) : "");
         }
     }
     else { // When there's both a prefix and suffix
-        pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}([^\\s]*)${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
+        pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}.*${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
         for (let i = 0; i < content.length; i++) {
             match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.prefix.length + doc.keysmash.suffix.length ? match[i].slice(doc.keysmash.prefix.length, match[i].length - doc.keysmash.suffix.length) : "");
@@ -104,8 +105,7 @@ async function replaceByKeysmash(doc, msg) {
     for (let i = 0; i < content.length; i++) {
         content[i] = content[i].replace(pattern, keysmash.ISOStandard(charset[i] || doc.charset || config.defaultCharset));
     }
-
-    return content.join(" ");
+    return content.join(" "); // Then join the elements and return the string
 };
 
 async function owoify(content) {
