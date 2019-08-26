@@ -112,8 +112,9 @@ async function owoify(content) {
     if (!content) return;
     return await content.split(" ")
         .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("l|r", "ig"), x => x === x.toUpperCase() ? "W" : "w") : x)
-        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("^the\\b", "ig"), x => x === x.toUpperCase() ? "DA" : "da") : x)
-        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("^th", "ig"), x => x === x.toUpperCase() ? "D" : "d") : x)
+        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("^the[^o]*\\b", "ig"), x => x === x.toUpperCase() ? "DA" : "da") : x)
+        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("^th(?!eo|in|ank)", "ig"), x => x === x.toUpperCase() ? "D" : "d") : x)
+        .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("^th.nk", "ig"), x => x === x.toUpperCase() ? `F${x.slice(2)}` : `f${x.slice(2)}`) : x)
         .map(x => !utils.validateUrl(x) ? x.replace(new RegExp("[ts]ion", "ig"), x => x === x.toUpperCase() ? "SHUN" : "shun") : x)
         .join(" ");
 };
