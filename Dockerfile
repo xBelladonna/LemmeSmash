@@ -4,4 +4,5 @@ WORKDIR /app
 
 ADD . /app
 
-RUN npm install && npm install -g pm2
+RUN npm install
+RUN npm install -g pm2
