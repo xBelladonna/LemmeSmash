@@ -6,7 +6,7 @@ const user = mongoose.model("user", schemas.user);
 
 module.exports = {
     name: "autoproxy",
-    aliases: ["a", "auto", "autowo"],
+    aliases: ["auto", "autowo"],
     description: "Enables automatic proxying to owospeak without using tags",
     usage: [
         "\nToggles between enabled and disabled states (per-server)"

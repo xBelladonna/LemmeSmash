@@ -5,7 +5,7 @@ const user = mongoose.model("users", schemas.user);
 
 module.exports = {
     name: "show",
-    aliases: ["s", "display", "user", "profile", "member"],
+    aliases: ["display", "user", "profile", "member"],
     description: "Shows your user card with your owo tags and custom character set, or of another user's if you pass their user ID",
     usage: [
         "",

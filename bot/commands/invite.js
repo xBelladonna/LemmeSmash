@@ -4,7 +4,7 @@ const utils = require("../utils.js");
 module.exports = {
     name: "invite",
     aliases: ["add", "link"],
-    description: "Generates an invite link for this bot's specific account",
+    description: "Generates an invite link for the bot and provides an invite link to the official support server",
     usage: [""],
     examples: null,
     execute: async (client, msg, args) => {
