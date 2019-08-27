@@ -6,7 +6,7 @@ const defaultPrefix = config.prefix[0].toLowerCase();
 
 module.exports = {
     name: "help",
-    aliases: ["h", "info", "help me"],
+    aliases: ["h", "info", "help me", "how"],
     description: "Shows my help card to help you get started",
     execute: async (client, msg, args) => {
         const commands = msg.client.commands; // Load commands into memory
