@@ -16,23 +16,25 @@ module.exports = {
         let command;
 
         // Parse arguments and look for valid commands to return help on
-        await new Promise(async (resolve, reject) => {
-            let i = 0;
-            let candidate;
+        if (args.length) {
+            await new Promise(async (resolve, reject) => {
+                let i = 0;
+                let candidate;
 
-            for (let commandName of args) {
-                commandName = commandName.toLowerCase();
-                candidate = await commands.get(commandName) || commands.find(command => command.aliases && command.aliases.includes(commandName));
-                i++
-                if (candidate) break;
-            }
+                for (let commandName of args) {
+                    commandName = commandName.toLowerCase();
+                    candidate = await commands.get(commandName) || commands.find(command => command.aliases && command.aliases.includes(commandName));
+                    i++
+                    if (candidate) break;
+                }
 
-            if (!candidate) return reject(true);
-            args = args.slice(i);
-            resolve(command = candidate);
-        }).catch(reason => {
-            if (reason === true) commandWasGiven = reason;
-        });
+                if (!candidate) return reject(true);
+                args = args.slice(i);
+                resolve(command = candidate);
+            }).catch(reason => {
+                if (reason === true) commandWasGiven = reason;
+            });
+        }
 
         // If we found a valid command somewhere, show that command's specific help card
         if (command) {
