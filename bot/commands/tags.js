@@ -50,14 +50,15 @@ module.exports = {
 async function setTags(user, msg, type, args) {
     let tags;
     let response;
+    const match = new RegExp("text", "ig");
     const tagsConflict = utils.errorEmbed(`You've already used either that prefix or suffix for your ${type} tags! Please try again with different tags or type \`${defaultPrefix}show\` to see your current settings.`);
 
     if (type === "owospeak") args.shift();
     if (args.length > 0) {
         let proxy = args.join(" ");
-        if (!proxy.includes("text")) return msg.channel.send(utils.errorEmbed("Example match must contain the string \`text\`, i.e. \`$text$\`"));
+        if (!proxy.match(match)) return msg.channel.send(utils.errorEmbed("Example match must contain the string \`text\`, i.e. \`$text$\`"));
 
-        proxy = proxy.split("text");
+        proxy = proxy.split(match);
         let prefix = proxy[0].trim() || "";
         let suffix = proxy[1].trim() || "";
         if (prefix === "" && suffix === "") return msg.channel.send(utils.errorEmbed(`Cannot have empty ${type} tags! You must provide either a prefix, a suffix, or both, i.e. \`$text\``));
