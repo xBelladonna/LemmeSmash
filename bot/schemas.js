@@ -13,7 +13,8 @@ module.exports = {
             suffix: { type: String, default: "" }
         },
         charset: { type: String, default: "" },
-        autoproxy: { type: Array, default: [] }
+        autoproxy: { type: Array, default: [] },
+        reblace: { type: Array, default: [] }
     }),
 
     guildSettings: new mongoose.Schema({

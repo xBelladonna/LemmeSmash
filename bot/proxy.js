@@ -18,6 +18,7 @@ module.exports.execute = async (client, msg) => {
         if (matchTags(doc, msg) === true) content = await replaceByKeysmash(doc, msg.content);
 
         if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(content != null ? content : msg.content);
+        if (doc.reblace.includes(msg.guild.id)) content = await reblace(content != null ? content : msg.content);
         else if (msg.content.startsWith(doc.owo.prefix) && msg.content.endsWith(doc.owo.suffix)) {
             if (doc.owo.prefix === "" && doc.owo.suffix === "") return;
             if (content != null) msg.content = content;
@@ -116,5 +117,12 @@ async function owoify(content) {
         .map(x => !utils.validateUrl(x) ? x.replace(/^th.nk/ig, x => x === x.toUpperCase() ? `F${x.slice(2)}` : `f${x.slice(2)}`) : x)
         .map(x => !utils.validateUrl(x) ? x.replace(/^th(?!eo)/ig, x => x === x.toUpperCase() ? "D" : "d") : x)
         .map(x => !utils.validateUrl(x) ? x.replace(/[ts]ion/ig, x => x === x.toUpperCase() ? "SHUN" : "shun") : x)
+        .join(" ");
+};
+
+async function reblace(content) {
+    if (!content) return;
+    return await content.split(" ")
+        .map(x => !utils.validateUrl(x) ? x.replace(/p|b/ig, "🅱") : x)
         .join(" ");
 };
