@@ -78,51 +78,91 @@ async function replaceByKeysmash(doc, msg) {
     // Match for prefixes, suffixes, or both, and get the charset if specified with the tag(s)
     let pattern;
     let match = [];
-    let content = msg.split(" ");
+    let content = utils.splitMessage(msg);
     let charset = [];
-    if (doc.keysmash.prefix != null && doc.keysmash.suffix == null) { // If there's a prefix but no suffix
+
+    // TODO: Refactor this entire section somehow, it's fugly and is basically code duplication
+    if (doc.keysmash.prefix != "" && doc.keysmash.suffix == "") { // If there's a prefix but no suffix
         pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}.*`, "g"); // Match for tags and prefixed charsets
         for (let i = 0; i < content.length; i++) { // Iterate over, creating an array of tags to replace
-            match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
+            match.push(content[i].content.match(pattern) != null ? content[i].content.match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.prefix.length ? match[i].slice(doc.keysmash.prefix.length) : "");
         }
     }
     else if (doc.keysmash.prefix == null && doc.keysmash.suffix != null) { // Match for suffixes only, the rest is the same as above
         pattern = new RegExp(`.*${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
         for (let i = 0; i < content.length; i++) {
-            match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
+            match.push(content[i].content.match(pattern) != null ? content[i].content.match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.suffix.length ? match[i].slice(0, match[i].length - doc.keysmash.suffix.length) : "");
         }
     }
     else { // When there's both a prefix and suffix
         pattern = new RegExp(`${utils.escapeCharacters(doc.keysmash.prefix)}.*${utils.escapeCharacters(doc.keysmash.suffix)}`, "g");
         for (let i = 0; i < content.length; i++) {
-            match.push(content[i].match(pattern) != null ? content[i].match(pattern).toString() : "");
+            match.push(content[i].content.match(pattern) != null ? content[i].content.match(pattern).toString() : "");
             charset.push(match[i].length > doc.keysmash.prefix.length + doc.keysmash.suffix.length ? match[i].slice(doc.keysmash.prefix.length, match[i].length - doc.keysmash.suffix.length) : "");
         }
     }
 
     // Replace all instances of tags with a keysmash
     for (let i = 0; i < content.length; i++) {
-        content[i] = content[i].replace(pattern, keysmash.ISOStandard(charset[i] || doc.charset || config.defaultCharset));
+        if (!content[i].codeblock)
+            content[i].content = content[i].content.replace(pattern, keysmash.ISOStandard(charset[i] || doc.charset || config.defaultCharset));
     }
-    return content.join(" "); // Then join the elements and return the string
+
+    let payload = [];
+    content.forEach(element => payload.push(element.content));
+    return payload.join(" "); // Then join the elements and return the string
 };
 
 async function owoify(content) {
     if (!content) return;
-    return await content.split(" ")
-        .map(x => !utils.validateUrl(x) ? x.replace(/l|r/ig, x => x === x.toUpperCase() ? "W" : "w") : x)
-        .map(x => !utils.validateUrl(x) ? x.replace(/^the(?!o)\b/ig, x => x === x.toUpperCase() ? "DA" : "da") : x)
-        .map(x => !utils.validateUrl(x) ? x.replace(/^th.nk/ig, x => x === x.toUpperCase() ? `F${x.slice(2)}` : `f${x.slice(2)}`) : x)
-        .map(x => !utils.validateUrl(x) ? x.replace(/^th(?!eo)/ig, x => x === x.toUpperCase() ? "D" : "d") : x)
-        .map(x => !utils.validateUrl(x) ? x.replace(/[ts]ion/ig, x => x === x.toUpperCase() ? "SHUN" : "shun") : x)
-        .join(" ");
+
+    let components = utils.splitMessage(content)
+        .map(x => {
+            if (!utils.validateUrl(x.content) && !x.codeblock) {
+                x.content = x.content.replace(/l|r/ig, x => x === x.toUpperCase() ? "W" : "w");
+                return x;
+            }
+            else return x;
+        })
+        .map(x => {
+            if (!utils.validateUrl(x.content) && !x.codeblock) {
+                x.content = x.content.replace(/^the(?!o)\b/ig, x => x === x.toUpperCase() ? "DA" : "da");
+                return x;
+            }
+            else return x;
+        })
+        .map(x => {
+            if (!utils.validateUrl(x.content) && !x.codeblock) {
+                x.content = x.content.replace(/^th.nk/ig, x => x === x.toUpperCase() ? `F${x.slice(2)}` : `f${x.slice(2)}`);
+                return x;
+            }
+            else return x;
+        })
+        .map(x => {
+            if (!utils.validateUrl(x.content) && !x.codeblock) {
+                x.content = x.content.replace(/^th(?!eo)/ig, x => x === x.toUpperCase() ? "D" : "d");
+                return x;
+            }
+            else return x;
+        })
+        .map(x => {
+            if (!utils.validateUrl(x.content) && !x.codeblock) {
+                x.content = x.content.replace(/[ts]ion/ig, x => x === x.toUpperCase() ? "SHUN" : "shun");
+                return x;
+            }
+            else return x;
+        });
+
+    let payload = [];
+    components.forEach(x => payload.push(x.content));
+    return payload.join(" ");
 };
 
 async function reblace(content) {
     if (!content) return;
-    return await content.split(" ")
-        .map(x => !utils.validateUrl(x) ? x.replace(/p|b/ig, "🅱") : x)
-        .join(" ");
+
+    return await utils.splitMessage(content).map(x => !utils.validateUrl(x.content) && !x.codeblock ? x.content.replace(/p|b/ig, "🅱") : x.content)
+    .join(" ");
 };

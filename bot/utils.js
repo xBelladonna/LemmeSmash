@@ -73,6 +73,23 @@ module.exports = {
         return string.replace(/[.*_~`(> )-^$+?\/|()[\]{}\\]/gm, '\\$&'); // $& means the whole matched string
     },
 
+    splitMessage: string => {
+        if (string == null) throw new TypeError("Empty input to splitMessage function!");
+        const inline = /`.*\n*`/g;
+        const block = /```.*\n*```/g;
+        let payload = [];
+
+        string.split(" ").map(x => {
+            if (inline.test(x))
+                payload.push({ content: x, codeblock: true });
+            else if (block.test(string))
+                payload.push({ content: x, codeblock: true });
+            else payload.push({ content: x, codeblock: false });
+        });
+
+        return payload;
+    },
+
     // Returns true if the input string is a URL and false if not
     validateUrl(url) {
         pattern = new RegExp(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/igm);
