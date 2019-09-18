@@ -85,14 +85,15 @@ client.on("message", async msg => {
 
     // Then execute any commands the user issued
     let args;
+    const varSelectors = /([\u180B-\u180D\uFE00-\uFE0F]|\uDB40[\uDD00-\uDDEF])/g; // Match all known unicode variation selectors
 
     // Detect pings and set args accordingly
     if (mention.test(msg.content)) {
-        args = msg.content.replace(mention, "").split(/ +/);
+        args = msg.content.replace(mention, "").replace(varSelectors, "").split(/ +/);
         if (args.length === 1 && args[0] === "") args[0] = "help"; // We set the first arg to "help" if there are no args (i.e. a ping on its own)
     }
     else if (msg.content.toLowerCase().startsWith(match))
-        args = msg.content.slice(match.length).split(/ +/); // Set args according to prefix if msg doesn't start with a ping
+        args = msg.content.slice(match.length).replace(varSelectors, "").split(/ +/); // Set args according to prefix if msg doesn't start with a ping
     else return; // Just do nothing if the message doesn't start with ping or prefix
 
     // Check permissions (if not in DMs)
