@@ -6,6 +6,8 @@ const config = require("../config.json");
 const utils = require("./utils.js");
 const keysmash = require("./keysmash.js");
 
+const emoji = new RegExp("<a?\:[a-z,A-Z,0-9,\-,_]+\:[0-9]{17,19}>", "ig");
+
 module.exports.execute = async (client, msg) => {
     if (msg.channel.type !== "text")
         return msg.channel.send(`I can't proxy in DMs because webhooks don't exist in them ${keysmash.ISOStandard("sdfghjvb")}`);
@@ -45,6 +47,7 @@ module.exports.execute = async (client, msg) => {
         try {
             // Send the complete webhook payload
             const sentMessage = await hook.send(content, options);
+            console.log(content)
 
             // Record the resulting message's details in the db
             await new message({
@@ -64,7 +67,6 @@ module.exports.execute = async (client, msg) => {
 };
 
 
-const emoji = new RegExp("<\:[a-z,A-Z,0-9,\-,_]+\:[0-9]{17,19}>", "ig");
 
 function matchTags(doc, msg) {
     if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
