@@ -67,6 +67,8 @@ module.exports = {
         }
     },
 
+    randomValueBetween: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
+
     // Add escape character ("\") before any special characters that need escaping (using regex)
     escapeCharacters: string => {
         if (string == null) throw new TypeError("Empty input to escapeCharacters function!");

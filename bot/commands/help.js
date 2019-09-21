@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const utils = require("../utils.js");
 const config = require("../../config.json");
 const defaultPrefix = config.prefix[0].toLowerCase();
