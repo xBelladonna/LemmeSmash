@@ -64,6 +64,8 @@ module.exports.execute = async (client, msg) => {
 };
 
 
+const emoji = new RegExp("<\:[a-z,A-Z,0-9,\-,_]+\:[0-9]{17,19}>", "ig");
+
 function matchTags(doc, msg) {
     if ((doc.keysmash.prefix != "" && doc.keysmash.suffix == "") && msg.content.includes(doc.keysmash.prefix))
         return true;
@@ -120,35 +122,35 @@ async function owoify(content) {
 
     let components = utils.splitMessage(content)
         .map(x => {
-            if (!utils.validateUrl(x.content) && !x.codeblock) {
+            if (!utils.validateUrl(x.content) && !x.codeblock && !emoji.test(x.content)) {
                 x.content = x.content.replace(/l|r/ig, x => x === x.toUpperCase() ? "W" : "w");
                 return x;
             }
             else return x;
         })
         .map(x => {
-            if (!utils.validateUrl(x.content) && !x.codeblock) {
+            if (!utils.validateUrl(x.content) && !x.codeblock && !emoji.test(x.content)) {
                 x.content = x.content.replace(/^the(?!o)\b/ig, x => x === x.toUpperCase() ? "DA" : "da");
                 return x;
             }
             else return x;
         })
         .map(x => {
-            if (!utils.validateUrl(x.content) && !x.codeblock) {
+            if (!utils.validateUrl(x.content) && !x.codeblock && !emoji.test(x.content)) {
                 x.content = x.content.replace(/^th.nk/ig, x => x === x.toUpperCase() ? `F${x.slice(2)}` : `f${x.slice(2)}`);
                 return x;
             }
             else return x;
         })
         .map(x => {
-            if (!utils.validateUrl(x.content) && !x.codeblock) {
+            if (!utils.validateUrl(x.content) && !x.codeblock && !emoji.test(x.content)) {
                 x.content = x.content.replace(/^th(?!eo)/ig, x => x === x.toUpperCase() ? "D" : "d");
                 return x;
             }
             else return x;
         })
         .map(x => {
-            if (!utils.validateUrl(x.content) && !x.codeblock) {
+            if (!utils.validateUrl(x.content) && !x.codeblock && !emoji.test(x.content)) {
                 x.content = x.content.replace(/[ts]ion/ig, x => x === x.toUpperCase() ? "SHUN" : "shun");
                 return x;
             }
@@ -163,6 +165,6 @@ async function owoify(content) {
 async function reblace(content) {
     if (!content) return;
 
-    return await utils.splitMessage(content).map(x => !utils.validateUrl(x.content) && !x.codeblock ? x.content.replace(/p|b/ig, "🅱") : x.content)
+    return await utils.splitMessage(content).map(x => !utils.validateUrl(x.content) && !x.codeblock && !emoji.test(x.content) ? x.content.replace(/p|b/ig, "🅱") : x.content)
     .join(" ");
 };
