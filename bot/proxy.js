@@ -37,7 +37,7 @@ module.exports.execute = async (client, msg) => {
         // Construct webhook payload options
         const options = {
             username: utils.truncateOrPadUsername(msg.member.displayName), // Set the name to either a server nickname (if exists) or a username
-            avatarURL: msg.author.avatarURL, // Get the URL of the user's avatar
+            avatarURL: msg.author.avatarURL.replace(/\?size=[0-9]+/ig, "") + "?size=256", // Get the URL of the user's avatar
             files: await utils.attach(msg.attachments), // Convert message attachments to an array of file objects
             disableEveryone: true
         };
