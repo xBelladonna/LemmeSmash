@@ -9,7 +9,7 @@ module.exports = {
     description: "Shows my help card to help you get started",
     execute: async (client, msg, args) => {
         const commands = msg.client.commands; // Load commands into memory
-        const embed = utils.warnEmbed().setFooter(`Type \`${defaultPrefix}help [command name]\` to get info on a specific command!`); // Prepare our embed card
+        const embed = utils.warnEmbed(); // Prepare our embed card
 
         let commandWasGiven = false;
         let command;
@@ -37,7 +37,8 @@ module.exports = {
 
         // If we found a valid command somewhere, show that command's specific help card
         if (command) {
-            embed.addField("Command:", command.name);
+            embed.setFooter("Parameters in <angle brackets> are required, parameters in [square brackets] are optional. Don't include the brackets in your commands!")
+                .addField("Command:", command.name);
             if (command.aliases) embed.addField("Aliases:", `${command.aliases.join(", ")}`);
             if (command.description) embed.addField("Description:", `${command.description}`);
             if (command.usage) {
@@ -85,6 +86,7 @@ module.exports = {
         let author = await client.user;
         let guildMember = msg.channel.type === "text" ? await msg.guild.fetchMember(author) : false;
         embed.setAuthor(guildMember ? `${guildMember.displayName} (${author.tag})` : author.tag, author.avatarURL)
+            .setFooter(`Type \`${defaultPrefix}help [command name]\` to get info on a specific command!`)
             .addField("About Me!", infoMsg)
             .addField("Getting Started", gettingStarted)
             .addField("Commands", commandList)

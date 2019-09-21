@@ -5,10 +5,10 @@ module.exports = {
     aliases: ["scream", "yell"],
     description: "Generates a **screm**",
     usage: [
-        "[character] [length]\nProxies a scream of length specified (or a random length between 5 and 70 characters if one isn't given) with the character given or the letter `A` if not given.\nMaximum screm length of 70 characters to avoid excessive spam."
+        "**[character] [length]**\nProxies a scream of length specified (or a random length between 5 and 70 characters if one isn't given) with the character given or the letter `A` if not given.\nMaximum screm length of 70 characters to avoid excessive spam."
     ],
-    examples: ["ks;screm", "ks;screm E", "ks;screm 70", "ks;screm h 20"],
-    execute: async(client, msg, args) => {
+    examples: ["", "E", "70", "h 20"],
+    execute: async (client, msg, args) => {
         let char;
         let length;
         let screm;
@@ -20,7 +20,8 @@ module.exports = {
 
         else if (args.length === 1) {
             const _length = parseInt(args[0]);
-            if (typeof (_length) === "number") {
+
+            if (!isNaN(_length)) {
                 char = "A";
                 length = _length;
             }
@@ -40,7 +41,11 @@ module.exports = {
         if (length <= 0) return await msg.channel.send(utils.errorEmbed("Seriously? A negative-length screm?"));
         if (length > 70) return await msg.channel.send(utils.errorEmbed("I'm not gonna screm more than 70 characters in a row."));
 
+        console.log("char: ", char)
+        console.log("length: ", length)
+
         screm = await generateScrem(char, length);
+        console.log("screm: ", screm)
         await msg.channel.send(screm);
         await msg.delete(250);
     }
