@@ -16,7 +16,9 @@ module.exports = {
         "075795705503915751"
     ],
     execute: async (client, msg, args) => {
-        await user.findById(args.length > 0 && args.length < 2 ? args[0] : msg.author.id).then(async doc => {
+        const userId = args.length > 0 && args.length < 2 ? args[0] : msg.author.id;
+
+        await user.findById(userId).then(async doc => {
             if (doc == null) return msg.channel.send(utils.errorEmbed(`${args.length > 0 && args.length < 2 ? "That user has" : "You have"} not set any tags or a custom character set. Type \`ks;help\` to get started!`));
 
             let tagsKeysmash = "";
@@ -35,16 +37,24 @@ module.exports = {
             else if (doc.owo.prefix != "" && doc.owo.suffix != "")
                 tagsOwo = `Prefix: \`${doc.owo.prefix}\`\nSuffix: \`${doc.owo.suffix}\`\nExample: ${doc.owo.prefix}Hello world${doc.owo.suffix}`;
 
+            const user = msg.channel.type === "text" ? await msg.guild.fetchMember(userId) : await client.users.get(userId);
+            console.log(user)
             let embed = utils.successEmbed()
-                if (msg.member != null)
-                    embed.setTitle(msg.member.displayName ? `${msg.member.displayName} (${msg.author.tag})` : msg.author.tag);
-                else embed.setTitle(msg.author.tag);
-                if (tagsKeysmash != "")
-                    embed.addField((doc.owo.prefix =! "" && doc.owo.suffix != "") ? "Keysmash tags" : "Keysmash tag", tagsKeysmash);
-                if (tagsOwo != "")
-                    embed.addField((doc.owo.prefix = ! "" && doc.owo.suffix != "") ? "OwO tags" : "OwO tag", tagsOwo);
-            if (doc.charset != "") embed.addField("Custom character set", `\`${doc.charset}\``);
-            if (msg.author.avatarURL) embed.setThumbnail(msg.author.avatarURL);
+            if (msg.channel.type === "text")
+                embed.setTitle(user.displayName ? `${user.displayName} (${user.user.tag})` : user.tag);
+            else embed.setTitle(user.tag);
+            if (msg.channel.type === "text" && user.user.avatarURL)
+                embed.setThumbnail(user.user.avatarURL);
+            if (msg.channel.type !== "text" && user.avatarURL)
+                embed.setThumbnail(user.avatarURL);
+
+            if (tagsKeysmash != "")
+                embed.addField((doc.owo.prefix =! "" && doc.owo.suffix != "") ? "Keysmash tags" : "Keysmash tag", tagsKeysmash);
+            if (tagsOwo != "")
+                embed.addField((doc.owo.prefix = ! "" && doc.owo.suffix != "") ? "OwO tags" : "OwO tag", tagsOwo);
+            if (doc.charset != "")
+                embed.addField("Custom character set", `\`${doc.charset}\``);
+
             return msg.channel.send(embed);
         });
     }
