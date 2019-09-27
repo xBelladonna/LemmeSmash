@@ -1,7 +1,7 @@
 {
     "token": "sedfghjkooIUTYF/CVBHUTYTikokjhg=-GGyitdhcgvuGfdrrDRYTFGF",
     "db": "mongodb://db/LemmeSmash",
-    "prefix": "ks;",
+    "prefix": ["ks;", "ks!", "ks "],
     "defaultCharset": "asdfghjkl",
     "logChannel": "536407846254975190",
     "owner": "932597343265834670",
@@ -10,6 +10,8 @@
             "VIEW_CHANNEL",
             "READ_MESSAGE_HISTORY",
             "SEND_MESSAGES",
+            "EMBED_LINKS",
+            "ATTACH_FILES",
             "ADD_REACTIONS"
         ],
         "proxy": [
