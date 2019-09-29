@@ -2,7 +2,6 @@ FROM node:alpine
 
 WORKDIR /app
 
-ADD . /app
+COPY . /app/
 
 RUN npm install
-RUN npm install -g pm2

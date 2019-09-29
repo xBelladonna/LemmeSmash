@@ -6,7 +6,7 @@ The bot uses configurable keysmash tags and generates ISO Standard keysmashes us
 
 The bot also helps you on your adventures by letting you make a different set of tags that transforms your message into OwOspeak (or just automatically, per-server, if you want that).
 
-The bot has five commands:
+The bot has a lot of commands, but the big ones are:
 
 - `ks;tags`
 - `ks;autoproxy`
@@ -15,7 +15,7 @@ The bot has five commands:
 - `ks;help`
 
 The bot explains all of these commands once you invite it.
-`ks;help` is the first command you're likely to use, and it's *very* helpful
+`ks;help` is the first command you're likely to use, on its own it shows the help menu and lists available commands, and when used with a command it brings up that command's information.
 `ks;tags` is used to set your keysmash tags, both prefixes and suffixes are supported. The tags must be around the word `text`, i.e. `ks;tags $text` or `ks;tags [text]`.
 `ks;autoproxy` just enables proxying of owospeak by default instead of having to set and use tags for it. Works per-server.
 

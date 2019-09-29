@@ -5,7 +5,7 @@ services:
     container_name: LemmeSmash-bot
     build: .
     entrypoint:
-      - pm2-runtime
+      - node
       - bot/main.js
     volumes:
       - "./config.json:/app/config.json:ro"
