@@ -38,7 +38,6 @@ module.exports = {
                 tagsOwo = `Prefix: \`${doc.owo.prefix}\`\nSuffix: \`${doc.owo.suffix}\`\nExample: ${doc.owo.prefix}Hello world${doc.owo.suffix}`;
 
             const user = msg.channel.type === "text" ? await msg.guild.fetchMember(userId) : await client.users.get(userId);
-            console.log(user)
             let embed = utils.successEmbed()
             if (msg.channel.type === "text")
                 embed.setTitle(user.displayName ? `${user.displayName} (${user.user.tag})` : user.tag);
