@@ -11,13 +11,17 @@ console.warn("Starting LemmeSmash...\n");
 console.warn("Connecting to database...");
 
 // Connect to the db
-mongoose.connect(config.db, {
-    useNewUrlParser: true,
-    reconnectTries: 20, // Attempt to reconnect 20 times
-    reconnectInterval: 3000 // Wait 3 seconds before retrying, for a total reconnection time limit of 60 seconds
-});
+dbConnect();
 const db = mongoose.connection;
-db.on("error", console.error.bind(console, "Database connection error:"));
+db.on("error", e => {
+    if (e.message && e.message.match(/failed to connect to server .* on first connect/)) {
+        const timeout = 5 * 1000;
+        console.error("Failed to connect to database on startup. Retrying in 5 sec...");
+        setTimeout(dbConnect, timeout);
+    }
+    console.error.bind(console, "Database error:\n");
+});
+
 db.once("open", () => {
     console.log(`Connected to database on ${config.db}\n`);
 });
@@ -155,3 +159,18 @@ client.login(config.token);
 // Graceful exit
 process.on("SIGINT", () => utils.gracefulExit(client));
 process.on("SIGTERM", () => utils.gracefulExit(client));
+
+
+// Database connection method
+async function dbConnect(db, options) {
+    if (!db)
+        db = config.db;
+
+    if (!options)
+        options = {
+            useNewUrlParser: true,
+            reconnectTries: 60, // Attempt to reconnect 60 times IF the connection is dropped, not on initial connection
+            reconnectInterval: 3 * 1000 // Wait 3 seconds before retrying, for a total reconnection time limit of 3 minutes
+        };
+    await mongoose.connect(db, options).catch(e => { /* Swallow the exception and use events to handle errors */ });
+}
