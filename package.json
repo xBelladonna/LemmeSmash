@@ -1,5 +1,5 @@
 {
-  "name": "LemmeSmash",
+  "name": "lemmesmash",
   "version": "1.0.0",
   "description": "A Discord bot that generates keysmashes for you and your friends",
   "main": "bot/main.js",
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/xBelladonna/LemmeSmash.git"
   },
-  "author": "Bella | Nightshade",
+  "author": "xBelladonna",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/xBelladonna/LemmeSmash/issues"

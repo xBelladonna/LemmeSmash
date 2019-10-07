@@ -42,18 +42,20 @@ The bot is written in JavaScript and uses a [MongoDB](https://www.mongodb.com/) 
 Running the bot is simple with Docker, this repository has a `docker-compose.yml` file ready to use:
 
 1. Clone the repo: `git clone https://github.com/xBelladonna/LemmeSmash.git`
-2. Create `config.json` in the same directory as `config-template.json` (see for the layout), and set bot token:
+2. Create `config.json` in the same directory as `config-template.json` (see for the layout):
 `cp config-template.json config.json`
-3. Run the stack: `docker-compose up -d`
+3. Set bot token: `nano config.json # or vim, emacs, whatever you use`
+4. Run the stack: `docker-compose up -d`
 
 ### Manually with Node.js
 
 1. Clone the repo: `git clone https://github.com/xBelladonna/LemmeSmash.git`
 2. Download and install dependencies: `npm install`
-3. Create `config.json` in the same directory as `config-template.json` (see for the layout), and set bot token:
+3. Create `config.json` in the same directory as `config-template.json` (see for the layout):
 `cp config-template.json config.json`
-4. Run a mongo database somewhere (i.e. localhost) and set the database URI in the config file (i.e. `mongodb://localhost`)
-5. Run the bot: `npm start`
+4. Set bot token: `nano config.json # or vim, emacs, whatever you use`
+5. Run a mongo database somewhere (i.e. localhost) and set the database URI in the config file (i.e. `mongodb://localhost`)
+6. Run the bot: `npm start`
 
 ## Configuration
 
