@@ -41,11 +41,7 @@ module.exports = {
         if (length <= 0) return await msg.channel.send(utils.errorEmbed("Seriously? A negative-length screm?"));
         if (length > 70) return await msg.channel.send(utils.errorEmbed("I'm not gonna screm more than 70 characters in a row."));
 
-        console.log("char: ", char)
-        console.log("length: ", length)
-
         screm = await generateScrem(char, length);
-        console.log("screm: ", screm)
         await msg.channel.send(screm);
         await msg.delete(250);
     }

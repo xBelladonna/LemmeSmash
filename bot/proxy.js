@@ -47,7 +47,6 @@ module.exports.execute = async (client, msg) => {
         try {
             // Send the complete webhook payload
             const sentMessage = await hook.send(content, options);
-            console.log(content)
 
             // Record the resulting message's details in the db
             await new message({
