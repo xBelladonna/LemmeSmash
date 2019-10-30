@@ -1,26 +1,30 @@
-version: "3"
+version: "2"
 
 services:
   bot:
-    container_name: LemmeSmash-bot
+    container_name: LemmeSmash_bot
+    restart: always
     build: .
     entrypoint:
       - node
       - bot/main.js
+    environment:
+      - TZ=    # Set your timezone using Olsen naming convention, i.e. TZ=America/New_York
     volumes:
       - "./config.json:/app/config.json:ro"
-    environment:
-      - TZ    # Set your timezone using Olsen naming convention, i.e. TZ=America/New_York
     depends_on:
       - db
-    restart: always
   db:
-    container_name: LemmeSmash-db
-    image: mongo
-    volumes:
-      - "data:/data/db"
+    container_name: LemmeSmash_db
     restart: always
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=lemmesmash
+      - MONGO_INITDB_ROOT_PASSWORD=lemmesmash
+      - MONGO_INITDB_DATABASE=lemmesmash
+    volumes:
+      - "db_data:/data/db"
 
 volumes:
-  data:
+  db_data:
     driver: local

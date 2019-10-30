@@ -23,7 +23,7 @@ db.on("error", e => {
 });
 
 db.once("open", () => {
-    console.log(`Connected to database on ${config.db}\n`);
+    console.log(`Connected to database.\n`);
 });
 
 const schemas = require("./schemas.js"); // Load db schemas into memory

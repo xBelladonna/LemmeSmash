@@ -1,6 +1,6 @@
 {
     "token": "sedfghjkooIUTYF/CVBHUTYTikokjhg=-GGyitdhcgvuGfdrrDRYTFGF",
-    "db": "mongodb://db/LemmeSmash",
+    "db": "mongodb://lemmesmash:lemmesmash@db/lemmesmash",
     "prefix": ["ks;", "ks!", "ks "],
     "defaultCharset": "asdfghjkl",
     "logChannel": "536407846254975190",
