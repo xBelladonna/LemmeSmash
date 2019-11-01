@@ -6,13 +6,11 @@ services:
     restart: always
     image: lemmesmash_bot:latest
     build: .
-    entrypoint:
-      - node
-      - bot/main.js
     environment:
       - TZ=    # Set your timezone using Olsen naming convention, i.e. TZ=America/New_York
     volumes:
       - "./config.json:/app/config.json:ro"
+    #  - "./certificates:/app/certificates:ro"
     depends_on:
       - db
   db:
@@ -25,6 +23,11 @@ services:
       - MONGO_INITDB_DATABASE=lemmesmash
     volumes:
       - "db_data:/data/db"
+    #  - "./mongod.conf:/etc/mongod.conf:ro"
+    #  - "./certificates:/data/certificates:ro"
+    #command:
+    #  - "--config"
+    #  - "/etc/mongod.conf"
 
 volumes:
   db_data:

@@ -70,6 +70,32 @@ The bot uses a JSON file named `config.json` for configuration, the elements are
 
 ----
 
+### Enabling SSL encrypted communiation with the database
+
+You can enable encrypted communication over SSL/TLS between mongoDB and this bot. This is completely optional and only recommended if you're going to expose the database's port on the host or otherwise make it accessible to others.
+
+The code is ready, you just need to create a folder in this directory called `certificates` and put 3 files in there with these names:
+  - Your certificate - `mongodb.pem`
+  - Your prvate key - `privkey.pem`
+  - Your root CA certificate - `ca.pem`
+
+In summary it should look like this:
+  - `LemmeSmash`
+    - `bot`
+      - `commands`
+    - `certificates`
+      - `mongodb.pem`
+      - `privkey.pem`
+      - `ca.pem`
+
+After the folder structure is right, uncomment everything in `docker-compose.yml` and start the bot like normal.
+
+If you're running the bot manually with your own mongo, you'll need to do the same thing as above except take those certificates and configure your mongo with them. I'm assuming you already know how to do this (or can learn how with Google) if you're reading this far down 😂
+
+Take a look at the provided `mongod.conf`, it contains a configuration for TLS encryption at the top of the file.
+
+----
+
 ## Dependencies
 
 - `discord.js` >= 11.5.0
