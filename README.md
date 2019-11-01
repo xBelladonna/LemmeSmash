@@ -75,9 +75,8 @@ The bot uses a JSON file named `config.json` for configuration, the elements are
 You can enable encrypted communication over SSL/TLS between mongoDB and this bot. This is completely optional and only recommended if you're going to expose the database's port on the host or otherwise make it accessible to others.
 
 The code is ready, you just need to create a folder in this directory called `certificates` and put 3 files in there with these names:
-  - Your certificate - `mongodb.pem`
-  - Your prvate key - `privkey.pem`
-  - Your root CA certificate - `ca.pem`
+  - Your server certificate - `mongodb.pem`
+  - Your root CA certificate - `rootCA.pem`
 
 In summary it should look like this:
   - `LemmeSmash`
@@ -85,8 +84,7 @@ In summary it should look like this:
       - `commands`
     - `certificates`
       - `mongodb.pem`
-      - `privkey.pem`
-      - `ca.pem`
+      - `rootCA.pem`
 
 After the folder structure is right, uncomment everything in `docker-compose.yml` and start the bot like normal.
 

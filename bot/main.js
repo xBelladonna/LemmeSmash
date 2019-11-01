@@ -173,16 +173,11 @@ async function dbConnect(db, options) {
             reconnectInterval: 3 * 1000 // Wait 3 seconds before retrying, for a total reconnection time limit of 3 minutes
         };
 
-    let certBuf;
-    let keyBuf;
     let caBuf;
     if (fs.existsSync("./certificates")) {
-        certBuf = fs.readFileSync("./certificates/mongodb.pem");
-        keyBuf = fs.readFileSync("./certificates/privkey.pem");
-
+        caBuf = fs.readFileSync("./certificates/rootCA.pem");
         options.ssl = true;
-        options.sslCert = certBuf;
-        options.sslKey = keyBuf;
+        options.sslCA = caBuf;
     }
 
     await mongoose.connect(db, options).catch(e => { /* Swallow the exception and use events to handle errors */ });
