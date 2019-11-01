@@ -2,8 +2,9 @@ version: "2"
 
 services:
   bot:
-    container_name: LemmeSmash_bot
+    container_name: lemmesmash_bot
     restart: always
+    image: lemmesmash_bot:latest
     build: .
     entrypoint:
       - node
@@ -15,9 +16,9 @@ services:
     depends_on:
       - db
   db:
-    container_name: LemmeSmash_db
+    container_name: lemmesmash_db
     restart: always
-    image: mongo
+    image: mongo:latest
     environment:
       - MONGO_INITDB_ROOT_USERNAME=lemmesmash
       - MONGO_INITDB_ROOT_PASSWORD=lemmesmash
