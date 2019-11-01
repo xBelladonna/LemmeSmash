@@ -179,12 +179,10 @@ async function dbConnect(db, options) {
     if (fs.existsSync("./certificates")) {
         certBuf = fs.readFileSync("./certificates/mongodb.pem");
         keyBuf = fs.readFileSync("./certificates/privkey.pem");
-        caBuf = fs.readFileSync("./certificates/ca.pem");
 
         options.ssl = true;
         options.sslCert = certBuf;
         options.sslKey = keyBuf;
-        options.sslCA = caBuf;
     }
 
     await mongoose.connect(db, options).catch(e => { /* Swallow the exception and use events to handle errors */ });
