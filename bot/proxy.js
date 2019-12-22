@@ -20,7 +20,7 @@ module.exports.execute = async (client, msg) => {
         if (matchTags(doc, msg) === true) content = await replaceByKeysmash(doc, msg.content);
 
         if (doc.autoproxy.includes(msg.guild.id)) content = await owoify(content != null ? content : msg.content);
-        if (doc.reblace.includes(msg.guild.id)) content = await reblace(content != null ? content : msg.content);
+        else if (doc.reblace.includes(msg.guild.id)) content = await reblace(content != null ? content : msg.content);
         else if (msg.content.startsWith(doc.owo.prefix) && msg.content.endsWith(doc.owo.suffix)) {
             if (doc.owo.prefix === "" && doc.owo.suffix === "") return;
             if (content != null) msg.content = content;
